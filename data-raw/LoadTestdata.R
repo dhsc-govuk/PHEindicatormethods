@@ -18,13 +18,11 @@ library(usethis)
 # esp2013
 esp2013 <- c(5000,5500,5500,5500,6000,6000,6500,7000,7000,7000,7000,6500,6000,5500,5000,4000,2500,1500,1000)
 
-#YLL_LE
-YLL_LE <- data.frame(AgeBandMin = c(0,1,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,0,1,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90),
-Sex = c(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2),
-LE2023 = c(78.85,78.19,74.23,69.26,64.29,59.38,54.52,49.68,44.88,40.15,35.5,30.98,26.60,22.38,18.38,14.66,11.23,8.20,5.75,3.89,
-           82.82, 82.11,78.14,73.17,68.19,63.24,58.30,53.38,48.49,43.66,38.89,34.21,29.64,25.18,20.91,16.84,13.03,9.59,6.73,4.50),
-YLL_LE65 = c(64.5,62.5,58,53,48,43,38,33,28,23,18,13,8,3,0,0,0,0,0,0,64.5,62.5,58,53,48,43,38,33,28,23,18,13,8,3,0,0,0,0,0,0),
-YLL_LE75 = c(74.5,72.5,68,63,58,53,48,43,38,33,28,23,18,13,8,3,0,0,0,0,74.5,72.5,68,63,58,53,48,43,38,33,28,23,18,13,8,3,0,0,0,0),stringsAsFactors = FALSE)
+#YLL_LE 5 year age bands
+YLL_LE_five<- read_excel("tests/testthat/YLL_LE.xlsx", sheet="5_yr_ageband", col_names=TRUE)
+
+#YLL_LE single year age bands
+YLL_LE_single<- read_excel("tests/testthat/YLL_LE.xlsx", sheet="single_yr_ageband", col_names=TRUE)
 
 ##############
 ## INTERNAL ##
@@ -184,7 +182,7 @@ SII_test_grouped <- SII_test_data %>%
 ########################################
 
 # SAVE EXTERNALLY AVAILABLE DATA IN data\XXXXXX.rda - data available to user
-usethis::use_data(esp2013, LE_data, DSR_data, prevalence_data,YLL_LE,
+usethis::use_data(esp2013, LE_data, DSR_data, prevalence_data,YLL_LE_five,YLL_LE_single,
                   internal=FALSE, overwrite=TRUE)
 
 
