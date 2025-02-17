@@ -18,11 +18,8 @@ library(usethis)
 # esp2013
 esp2013 <- c(5000,5500,5500,5500,6000,6000,6500,7000,7000,7000,7000,6500,6000,5500,5000,4000,2500,1500,1000)
 
-#YLL_LE 5 year age bands
-YLL_LE_five<- read_excel("tests/testthat/YLL_LE.xlsx", sheet="5_yr_ageband", col_names=TRUE)
-
-#YLL_LE single year age bands
-YLL_LE_single<- read_excel("tests/testthat/YLL_LE.xlsx", sheet="single_yr_ageband", col_names=TRUE)
+#YLL_LE five year age bands
+YLL_LE<- read_excel("tests/testthat/YLL_LE.xlsx", sheet="yll_le_5yr", col_names=TRUE)
 
 ##############
 ## INTERNAL ##
@@ -182,7 +179,7 @@ SII_test_grouped <- SII_test_data %>%
 ########################################
 
 # SAVE EXTERNALLY AVAILABLE DATA IN data\XXXXXX.rda - data available to user
-usethis::use_data(esp2013, LE_data, DSR_data, prevalence_data,YLL_LE_five,YLL_LE_single,
+usethis::use_data(esp2013, LE_data, DSR_data, prevalence_data,YLL_LE,
                   internal=FALSE, overwrite=TRUE)
 
 
