@@ -137,13 +137,13 @@ calculate_yll <- function(data,
                 total_pop = sum(n),
                 value = sum(yll),
                 err_frac = sum(err_frac),
-                lowercl = value + sqrt((err_frac/sum(x, na.rm=TRUE)))*
-                  (byars_lower(sum(x, na.rm=TRUE), conf1) - sum(x, na.rm=TRUE)), #CHECK IF NEED TO * MULTIPLIER
-                uppercl = value + sqrt((err_frac/sum(x, na.rm=TRUE)))*
+                lowercl = value + sqrt((err_frac/sum(x, na.rm=TRUE))) *
+                  (byars_lower(sum(x, na.rm=TRUE), conf1) - sum(x, na.rm=TRUE)),
+                uppercl = value + sqrt((err_frac/sum(x, na.rm=TRUE))) *
                   (byars_upper(sum(x, na.rm=TRUE), conf1) - sum(x, na.rm=TRUE)),
                 lower99_8cl = case_when(
                   is.na(conf2) ~ NA_real_,
-                  .default = value + sqrt((err_frac/sum(x, na.rm=TRUE)))*
+                  .default = value + sqrt((err_frac/sum(x, na.rm=TRUE))) *
                   (byars_lower(sum(x, na.rm=TRUE), min(conf2, 1, na.rm = TRUE)) - sum(x, na.rm=TRUE))
                   ),
                 upper99_8cl = case_when(
