@@ -1,7 +1,7 @@
 # -------------------------------------------------------------------------------------------------
 #' Calculate years of life lost using calculate_yll
 #'
-#' Calculates  years of life lost rates with confidence limits using Dobson & Byar's (YLL variation) method.
+#' Calculates years of life lost rates with confidence limits using Dobson & Byar's (YLL variation) method.
 #'
 #' @param data data.frame containing the data to be standardised, pre-grouped if
 #'   multiple YLL required; unquoted string; no default
@@ -11,7 +11,7 @@
 #' @param n field name from data containing the populations for each
 #'   standardisation category (eg ageband) within each grouping set (eg area);
 #'   unquoted string; no default
-#'  @param le field name from data containing  the life expectancy for
+#'  @param yll field name from data containing  the years of life lost for
 #'  each standardisation category (eg ageband) within each grouping set (eg area)
 #'  unquoted string; no default
 #' @param stdpop field name from data containing the standard populations for
@@ -56,7 +56,7 @@
 calculate_yll <- function(data,
                           x,
                           n,
-                          le = NULL,
+                          yll = NULL,
                           stdpop = NULL,
                           type = "full",
                           confidence = 0.95,
@@ -65,8 +65,8 @@ calculate_yll <- function(data,
 # Validate arguments ---------------------------------------------------------
 
   # check required arguments present
-  if (missing(data) | missing(x) | missing(n) | missing(le) | missing(stdpop)) {
-    stop("function calculate_yll requires at least 5 arguments: data, x, n, le, stdpop")
+  if (missing(data) | missing(x) | missing(n) | missing(yll) | missing(stdpop)) {
+    stop("function calculate_yll requires at least 5 arguments: data, x, n, yll, stdpop")
   }
 
   # check columns exist in data.frame
@@ -83,8 +83,8 @@ calculate_yll <- function(data,
     stop("n is not a field name from data")
   }
 
-  if (!deparse(substitute(le)) %in% colnames(data)) {
-    stop("le is not a field name from data")
+  if (!deparse(substitute(yll)) %in% colnames(data)) {
+    stop("yll is not a field name from data")
   }
 
   if (!deparse(substitute(stdpop)) %in% colnames(data)) {
@@ -101,7 +101,7 @@ calculate_yll <- function(data,
     rename(
       x = {{ x }},
       n = {{ n }},
-      le = {{ le }},
+      yll = {{ yll }},
       stdpop = {{ stdpop }}
     )
 
@@ -130,9 +130,9 @@ calculate_yll <- function(data,
 
   # calculate YLL and CIs
     ylls <- data %>%
-      mutate(yll=(le * x *(stdpop/n)),
-             numerator=(le * x ),
-             err_frac =((stdpop/n)^2) * x * ((le)^2)) %>%
+      mutate(yll=(yll * x *(stdpop/n)),
+             numerator=(yll * x ),
+             err_frac =((stdpop/n)^2) * x * ((yll)^2)) %>%
       summarise(total_count = sum(numerator),
                 total_pop = sum(n),
                 value = sum(yll),
