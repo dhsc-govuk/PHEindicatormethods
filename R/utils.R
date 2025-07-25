@@ -707,3 +707,206 @@ sigma_adjustment <- function(p, population, average_proportion, side, multiplier
   return(adj_return)
 }
 
+# ------------------------------------------------------------------------------
+#' Function to transform the denominator for trend markers
+#'
+#' If there are only indicator values and numerators are present the denominator needs to be calculated
+#' For directly standardised rates, the populations may be present, but the denominators
+#' should still be calculated as above and these derived denominators used.
+#'
+#' @param data a data.frame containing the data to transform the denominator; unquoted string; no default
+#' @param numerator field name from data containing the observed numbers of cases in the sample meeting the required condition; unquoted string; no default
+#' @param value field name within data that contains the indicator value; unquoted string; no default
+#' @param multiplier the multiplier that the rate is normalised with (ie, per 100,000). Multiplier is not
+#' needed for "proportion"; numeric; default = 1
+#'
+#' @noRd
+#'
+# ------------------------------------------------------------------------------
+
+transform_denominator <- function(data, numerator , value, multiplier = 1) {
+
+  df <- data %>%
+    mutate(denominator_transformed = .data[[numerator]] / (.data[[value]] / multiplier))
+
+  return(df)
+
+}
+
+# ------------------------------------------------------------------------------
+#' Function to transform the numerator for trend markers
+#'
+#' If only indicator values and denominators are present the numerator needs to be calculated
+#'
+#' @param data a data.frame containing the data to transform the numerator for; unquoted string; no default
+#' @param denominator field name from data containing the population(s) in the sample; unquoted string; no default
+#' @param value field name within data that contains the indicator value; unquoted string; no default
+#' @param multiplier the multiplier that the rate is normalised with (ie, per 100,000). Multiplier is not
+#' needed for "proportion"; numeric; default = 1
+#'
+#' @noRd
+#'
+# ------------------------------------------------------------------------------
+
+transform_numerator <- function(data, denominator , value, multiplier = 1) {
+
+
+  df <- data %>%
+    mutate(numerator_transformed = .data[[denominator]] * (.data[[value]] / multiplier))
+
+  return(df)
+
+}
+
+# ------------------------------------------------------------------------------
+#' function to test for trend significance for proportions
+#'
+#' @param denominator field name from data containing the population(s) in the sample; unquoted string; no default
+#' @param numerator field name from data containing the observed numbers of cases in the sample meeting the required condition; unquoted string; no default
+#' @param t field name within the data that contains time period values; unquoted string; numeric
+#'
+#'
+#' @noRd
+#'
+# ------------------------------------------------------------------------------
+
+
+calculate_trend_logistic_regression <- function(denominator, numerator, t){
+
+
+  denominator <-as.numeric(denominator)
+  numerator <- as.numeric(numerator)
+  t <- as.numeric(t)
+
+
+  sum_d <- sum(denominator)
+  sum_ct <- sum(numerator * t)
+  sum_c <- sum(numerator)
+  sum_dt <- sum(denominator * t)
+  t_2 <- t^2
+  sum_dt_2 <- sum(denominator * t_2)
+  dt2 <- sum_dt^2
+
+  x2_numerator <- sum_d * ((sum_d * sum_ct) - (sum_c * sum_dt))^2
+  x2_denominator <- sum_c * (sum_d - sum_c)  * (sum_d * sum_dt_2 - dt2)
+
+  x2 <- x2_numerator / x2_denominator
+
+  return(x2)
+
+}
+
+
+# ------------------------------------------------------------------------------
+#' function to test for trend significance for non-proportions
+#'
+#' @param value field name within data that contains the indicator value; unquoted string; no default
+#' @param t field name within the data that contains time period values; unquoted string; numeric
+#' @param lower_ci field name within data that contains 95 percent lower confidence limit of indicator value (to calculate standard error of indicator value).
+#' lower_ci is not needed for "proportions". unquoted string; no default
+#' @param upper_ci field name within data that contains 95 percent upper confidence limit of indicator value (to calculate standard error of indicator value).
+#' upper_ci is not needed for "proportions". unquoted string; no default
+#'
+#' @noRd
+#'
+# ------------------------------------------------------------------------------
+
+calculate_trend_weighted_regression<- function(value,
+                                               t,
+                                               lower_cl=NULL,
+                                               upper_cl =NULL){
+
+  upper_cl <- as.numeric(upper_cl)
+  lower_cl <- as.numeric(lower_cl)
+
+
+  sigma_2 <- ((upper_cl - lower_cl) / 3.92)^2
+  t_2 <- t^2
+  sum_1_sigma_2 <- sum(1 / sigma_2)
+  sum_valuet_sigma_2 <- sum((value * t) / sigma_2)
+  sum_t_sigma_2 <- sum(t / sigma_2)
+  sum_value_sigma_2 <- sum(value / sigma_2)
+  sum_t2_sigma_2 <- sum(t_2 / sigma_2)
+
+  beta_numerator <- (sum_1_sigma_2 * sum_valuet_sigma_2) - (sum_t_sigma_2 * sum_value_sigma_2)
+  beta_denominator <- (sum_1_sigma_2 * sum_t2_sigma_2) - (sum_t_sigma_2)^2
+
+  beta <- beta_numerator / beta_denominator
+  se_beta <-sqrt( sum_1_sigma_2 / (sum_1_sigma_2 * sum_t2_sigma_2 - sum_t_sigma_2^2))
+
+
+  x2<- (beta / se_beta)^2
+
+  return(x2)
+}
+
+# ------------------------------------------------------------------------------
+#' function to calculate trend direction
+#'
+#' @param value field name within data that contains the indicator value; unquoted string; no default
+#' @param t field name within the data that contains time period values; unquoted string; numeric
+#' @param value_type indicates the indicator type (proportion, other, dsr); quoted string
+#' @param lower_ci field name within data that contains 95 percent lower confidence limit of indicator value (to calculate standard error of indicator value).
+#' lower_ci is not needed for "proportions". unquoted string; no default
+#' @param upper_ci field name within data that contains 95 percent upper confidence limit of indicator value (to calculate standard error of indicator value).
+#' upper_ci is not needed for "proportions". unquoted string; no default
+#'
+#' @noRd
+#'
+# ------------------------------------------------------------------------------
+
+calculate_trend_direction <- function(value,
+                                      t,
+                                      value_type= c('proportion','other','dsr'),
+                                      lower_cl=NULL,upper_cl =NULL){
+
+  if (value_type == 'proportion') {
+
+    if (any(value < 0) | (any(value > 1)) ) {
+      stop("proportions need to be between 0 and 1")
+    }
+
+
+    N <- length(value)
+
+
+    log_x <- log(value / (1 - value))
+    sum_log_x <- sum(log_x)
+    sum_log_x_t <- sum(log_x * t)
+    sum_t <- sum(t)
+    sum_log_x_sum_t <- sum_log_x * sum_t
+    sum_t2 <- sum(t^2)
+    t2_summed <- sum(t)^2
+
+
+    beta_numerator <- (N * sum_log_x_t) - sum_log_x_sum_t
+    beta_denominator <- (N * sum_t2) - t2_summed
+
+    beta <- beta_numerator / beta_denominator
+
+
+  } else if (value_type %in% c('other','dsr')){
+
+
+    upper_cl <- as.numeric(upper_cl)
+    lower_cl <- as.numeric(lower_cl)
+
+
+    sigma_2 <- ((upper_cl - lower_cl) / 3.92)^2
+    t_2 <- t^2
+    sum_1_sigma_2 <- sum(1 / sigma_2)
+    sum_xt_sigma_2 <- sum((value * t) / sigma_2)
+    sum_t_sigma_2 <- sum(t / sigma_2)
+    sum_x_sigma_2 <- sum(value / sigma_2)
+    sum_t2_sigma_2 <- sum(t_2 / sigma_2)
+
+    beta_numerator <- (sum_1_sigma_2 * sum_xt_sigma_2) - (sum_t_sigma_2 * sum_x_sigma_2)
+    beta_denominator <- (sum_1_sigma_2 * sum_t2_sigma_2) - (sum_t_sigma_2)^2
+
+    beta <- beta_numerator / beta_denominator
+
+  }
+
+  return(beta)
+
+}
