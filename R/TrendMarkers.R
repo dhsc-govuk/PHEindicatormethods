@@ -81,328 +81,171 @@
 #' @family PHEindicatormethods package functions
 #'
 
-
-
 assign_trend_markers <- function(data,
-                                 t,
-                                 value = NULL,
-                                 denominator = NULL,
-                                 numerator = NULL,
-                                 value_type = c("proportion", "other", 'dsr'),
-                                 lower_cl= NULL,
-                                 upper_cl = NULL,
-                                 denominator_transform = FALSE,
-                                 numerator_transform = FALSE,
+                                 year_col,
+                                 value,
+                                 denominator,
+                                 numerator,
+                                 value_type = c("proportion", "other"),
+                                 lower_cl,
+                                 upper_cl,
                                  multiplier = 1) {
 
   if (missing(data)) {
     stop("function assign_trend_markers requires the arguments: data")
   }
 
-  if (missing(t)) {
-    stop("function assign_trend_markers requires the t field")
+  if (missing(year_col)) {
+    stop("function assign_trend_markers requires the year_col field")
   }
 
-  if (!(value_type %in% c("proportion", "other", 'dsr'))) {
-    stop('value_type should be either "proportion", "other", "dsr"')
+  if (!(value_type %in% c("proportion", "other"))) {
+    stop('value_type should be either "proportion", "other"')
   }
 
-  if (denominator_transform == TRUE && numerator_transform == TRUE) {
-
-    stop('"denominator_transform" and "numerator_transform" cannot both be TRUE')
-
-  }
-
-  t <- as_label(rlang::enquo(t))
 
 
-  value <- rlang::enquo(value)
-
-  denominator <- rlang::enquo(denominator)
-
-  numerator <- rlang::enquo(numerator)
-
-
-  if (numerator_transform == TRUE){
-
-    if ((is_quosure(value) & quo_is_null(value)) | (is_quosure(denominator) & quo_is_null(denominator))) {
-
-      stop("function assign_trend_markers requires denominator and value when numerator_transform is true")
-
+  if (value_type =='other'){
+    if ( missing(lower_cl) | missing(upper_cl)) {
+       stop(paste('function assign_trend_markers requires "lower_cl" and "upper_cl" when value_type is other'))
     }
 
-    value <- as_label(value)
-    denominator <- as_label(denominator)
+    if (missing(value)){
 
-    data <-transform_numerator(data = data, denominator = denominator , value= value, multiplier = multiplier)
-
-    numerator <- 'numerator_transformed'
-
-
-  } else if (is_quosure(numerator)){
-
-    if (quo_is_null(numerator)) {
-
-      stop("function assign_trend_markers requires a numerator if numerator_transform is FALSE")
+     stop(paste('function assign_trend_markers requires value when value_type is "other"'))
 
     }
-
-
-    numerator <- as_label(numerator)
-
-
-  }
-
-  if (denominator_transform == TRUE){
-
-    if (is_quosure(value) && quo_is_null(value)) {
-
-      stop("function assign_trend_markers requires numerator and value when denominator_transform is true")
-
-    }
-
-    value <- as_label(value)
-
-    data <-transform_denominator(data, numerator , value, multiplier = multiplier )
-
-    denominator <- 'denominator_transformed'
-
-  } else if (is_quosure(denominator)){
-
-    if (quo_is_null(denominator)) {
-
-      stop("function assign_trend_markers requires a denominator if denominator_transform is FALSE")
-
-    }
-
-
-    denominator <- as_label(denominator)
-
   }
 
 
-  if (is_grouped_df(data)) {
+  year_col <- deparse(substitute(year_col))
 
 
-    df_list <- data %>%
-      group_split()
+  value <- if (!missing(value)) deparse(substitute(value)) else NULL
 
-    } else {
+  denominator <- if (!missing(denominator)) deparse(substitute(denominator)) else NULL
 
-    df_list <- list(data)
+  numerator <- if (!missing(numerator)) deparse(substitute(numerator)) else NULL
 
-  }
+
+  lower_cl <- if (!missing(lower_cl)) deparse(substitute(lower_cl)) else NULL
+
+  upper_cl <- if (!missing(upper_cl)) deparse(substitute(upper_cl)) else NULL
 
   if (value_type == 'proportion'){
+
+
+    if (is.null(numerator) && is.null(denominator)){
+
+      stop(paste('function assign_trend_markers requires at least a numerator or denominator when value_type is "proportion"'))
+
+
+    }
+
+    if (is.null(numerator)){
+
+      data <- derive_proportion_element(data = data, denominator = denominator, value = value)
+
+      numerator <- 'numerator'
+
+    } else if (is.null(denominator)){
+
+      data <- derive_proportion_element(data = data, numerator = numerator, value = value)
+
+      denominator <- 'denominator'
+
+    }
+
+
+  }
+
+
+
+  df_list <- if (is_grouped_df(data)) {
+    group_split(data)
+  } else {
+      list(data)}
 
 
 
     df_results <- map(df_list, function(df){
 
-      if (nrow(df) < 5) {
+      df <- df %>%
+        arrange(.data[[year_col]])
 
-        df <- df %>%
-          mutate(
-            RecentTrend = case_when(row_number() == n() ~ "Cannot be calculated", TRUE ~ NA_character_),
-            TrendReason = case_when(row_number() == n() ~ "Not enough data points", TRUE ~ NA_character_)
-          )
+      n_rows <- nrow(df)
 
-        return(df)
-      }
+      df$RecentTrend <- NA_character_
+      df$RecentTrendReason <- NA_character_
 
-      df %>%
-        slice_max(order_by = .data[[t]], n = 5, with_ties = FALSE) %>%
-        arrange(.data[[t]])
+      if (n_rows < 5) {
 
-      values <- df[[numerator]] / df[[denominator]]
-      denominator_value <- df[[denominator]]
-      numerator_value <- df[[numerator]]
-      time_value <- df[[t]]
-
-      if (any(is.na(values))) {
-
-        df <- df %>%
-          mutate(
-            RecentTrend = case_when(row_number() == n() ~ "Cannot be calculated", TRUE ~ NA_character_),
-            TrendReason = case_when(row_number() == n() ~ "Missing values", TRUE ~ NA_character_)
-          )
+        df$RecentTrend[n_rows] <- "Cannot be calculated"
+        df$RecentTrendReason[n_rows] <- "Not enough data points"
 
         return(df)
-
       }
 
-      time_difference<- diff(time_value)
-
-      if(!all(time_difference==time_difference[1])){
-
-        df <- df %>%
-          mutate(
-            RecentTrend = case_when(row_number() == n() ~ "Cannot be calculated", TRUE ~ NA_character_),
-                   TrendReason = case_when(row_number() == n() ~ "time values not equal", TRUE ~ NA_character_)
-                 )
-      }
-
-      beta <- calculate_trend_direction(value = values,
-                                        t = time_value,
-                                        value_type = value_type)
-
-      test_statistic <- calculate_trend_logistic_regression(denominator = denominator_value,
-                                                            numerator = numerator_value,
-                                                            t = time_value)
-
-      if (test_statistic > 9.5495) {
-
-        opposite_found <- FALSE
-
-        for (i in 1:length(values)) {
-
-          beta_sub <- calculate_trend_direction(value = values[-i], t = time_value[-i], value_type = value_type)
-
-          if (sign(beta_sub) != sign(beta)) {
-
-            opposite_found <- TRUE
-            break
-          }
-        }
-
-        if (opposite_found) {
-
-          RecentTrend <- "No significant change"
-          TrendReason <- paste0("Outlier found")
-        } else {
-          RecentTrend <- ifelse(beta < 0, "decreasing", "increasing")
-          TrendReason <- "No outliers and x2 > 9.5495"
-        }
-
-      } else {
-        RecentTrend <- "No significant change"
-        TrendReason <- "x2 < 9.5495"
-      }
-
-      df %>%
-        mutate(
-          RecentTrend = case_when(row_number() == n() ~ RecentTrend, TRUE ~ NA_character_),
-          TrendReason = case_when(row_number() == n() ~ TrendReason, TRUE ~ NA_character_)
-        )
-    })
-
-    } else if (value_type %in% c('other','dsr')){
+      if (value_type == 'other'){
 
 
+        for (i in 5:n_rows){
 
-      if (missing(lower_cl) | missing(upper_cl) ) {
-        stop(paste('function assign_trend_markers requires "lower_cl" and "upper_cl" when value_type is other or "dsr"'))
-      }
+          df_sub <- df[(i - 4):i,]
 
-      if (is_quosure(value)){
-
-        if (quo_is_null(value)) {
-          stop(paste('function assign_trend_markers requires value when value_type is "other" or "dsr"'))
-        }
-
-        value <- as_label(value)
+          values <- df_sub[[value]] / multiplier
+          denominator_value <- df_sub[[denominator]]
+          numerator_value <- df_sub[[numerator]]
+          time_value <- df_sub[[year_col]]
+          lower_cl_value <- df_sub[[lower_cl]]
+          upper_cl_value <- df_sub[[upper_cl]]
 
 
-      }
+          if (anyNA(values)) {
 
+            df$RecentTrend[i] <- "Cannot be calculated"
+            df$RecentTrendReason[i] <- "Missing values"
 
-      if (value_type=='dsr' && denominator_transform == FALSE){
+            next
 
-        stop("denominator needs to be transformed for dsr")
-      }
-
-
-
-      lower_cl <- as_label(enquo(lower_cl))
-      upper_cl <- as_label(enquo(upper_cl))
-
-
-        df_results <- map(df_list, function(df){
-
-          if (nrow(df) < 5) {
-
-              df <- df %>%
-                mutate(
-                  RecentTrend = case_when(row_number() == n() ~ "Cannot be calculated", TRUE ~ NA_character_),
-                  TrendReason = case_when(row_number() == n() ~ "Not enough data points", TRUE ~ NA_character_)
-                )
-
-              return(df)
           }
 
-          df %>%
-            slice_max(order_by = .data[[t]], n = 5, with_ties = FALSE) %>%
-            arrange(.data[[t]])
-
-          values <- df[[value]] / multiplier
-          denominator_value <- df[[denominator]]
-          numerator_value <- df[[numerator]]
-          time_value <- df[[t]]
-          upper_cl_value <- df[[upper_cl]]
-          lower_cl_value <- df[[lower_cl]]
-
-          if (any(is.na(values))) {
 
 
-            df <- df %>%
-              mutate(
-                RecentTrend = case_when(row_number() == n() ~ "Cannot be calculated", TRUE ~ NA_character_),
-                TrendReason = case_when(row_number() == n() ~ "Missing values", TRUE ~ NA_character_)
-              )
+          if(anyNA(lower_cl_value) | anyNA(upper_cl_value)){
 
-            return(df)
-          }
-
-          time_difference<- diff(time_value)
-
-          if(!all(time_difference==time_difference[1])){
-
-            df <- df %>%
-              mutate(
-                RecentTrend = case_when(row_number() == n() ~ "Cannot be calculated", TRUE ~ NA_character_),
-                TrendReason = case_when(row_number() == n() ~ "time points not equally spaced", TRUE ~ NA_character_)
-              )
-
-            return(df)
-          }
-
-          if(any(is.na(lower_cl_value)) | any(is.na(upper_cl_value)) ){
-
-            df <- df %>%
-              mutate(
-                RecentTrend = case_when(row_number() == n() ~ "Cannot be calculated", TRUE ~ NA_character_),
-                TrendReason = case_when(row_number() == n() ~ "missing at least one confidence interval value", TRUE ~ NA_character_)
-              )
+            df$RecentTrend[i] <- "Cannot be calculated"
+            df$RecentTrendReason[i] <- "missing at least one confidence interval value"
 
             return(df)
           }
 
 
-          beta <- calculate_trend_direction(value = values,
-                                            t = time_value,
-                                            value_type= value_type,
-                                            lower_cl = lower_cl_value,
-                                            upper_cl = upper_cl_value)
+          beta <- calculate_trend_weighted_regression(value = values, year_col= time_value,
+                                                      lower_cl = lower_cl_value,
+                                                      upper_cl = upper_cl_value,
+                                                      trend_direction_only  = TRUE)
 
 
 
-          test_statistic <- calculate_trend_weighted_regression(value = values, t= time_value,
-                                                               lower_cl = lower_cl_value,
-                                                               upper_cl = upper_cl_value)
+          test_statistic <- calculate_trend_weighted_regression(value = values, year_col= time_value,
+                                                                lower_cl = lower_cl_value,
+                                                                upper_cl = upper_cl_value,
+                                                                trend_direction_only = FALSE)
+
 
 
           if (test_statistic > 9.5495) {
 
             opposite_found <- FALSE
 
-            for (i in 1:length(values)) {
+            for (j in 1:length(values)) {
 
-              beta_sub <- calculate_trend_direction(value = values[-i],
-                                                    t = time_value[-i],
-                                                    value_type = value_type,
-                                                    lower_cl = lower_cl_value[-i],
-                                                    upper_cl = upper_cl_value[-i])
-              print(beta_sub)
+              beta_sub <- calculate_trend_weighted_regression(value = values[-j], year_col= time_value[-j],
+                                                              lower_cl = lower_cl_value[-j],
+                                                              upper_cl = upper_cl_value[-j],
+                                                              trend_direction_only  = TRUE)
+
               if (sign(beta_sub) != sign(beta)) {
 
                 opposite_found <- TRUE
@@ -413,32 +256,101 @@ assign_trend_markers <- function(data,
 
             if (opposite_found) {
 
-              RecentTrend <- "No significant change"
-              TrendReason <- paste0("Outlier found")
+              df$RecentTrend[i] <- "No significant change"
+              df$RecentTrendReason[i] <- paste0("Outlier found")
 
             } else {
 
-              RecentTrend <- ifelse(beta < 0, "decreasing", "increasing")
-              TrendReason <- "No outliers and x2 > 9.5495"
+              df$RecentTrend[i] <- ifelse(beta < 0, "decreasing", "increasing")
+              df$RecentTrendReason[i] <- "No outliers and chi-square is bigger than 9.5495"
             }
 
           } else {
 
-            RecentTrend <- "No significant change"
-            TrendReason <- "x2 < 9.5495"
+            df$RecentTrend[i] <- "No significant change"
+            df$RecentTrendReason[i]  <- "chi-square is less than 9.5495"
+
+
+          }
+        }
+
+        return(df)
+
+      } else if (value_type == 'proportion'){
+
+
+
+        for (i in 5:n_rows){
+
+          df_sub <- df[(i - 4):i,]
+
+          denominator_value <- df_sub[[denominator]]
+          numerator_value <- df_sub[[numerator]]
+          time_value <- df_sub[[year_col]]
+
+
+
+          if (anyNA(denominator_value) | anyNA(numerator_value)) {
+
+            df$RecentTrend[i] <- "Cannot be calculated"
+            df$RecentTrendReason[i] <- "Missing values"
+
+            next
+
           }
 
-          df %>%
-            mutate(
-              RecentTrend = case_when(row_number() == n() ~ RecentTrend, TRUE ~ NA_character_),
-              TrendReason = case_when(row_number() == n() ~ TrendReason, TRUE ~ NA_character_)
-            )
-        })
 
-    }
+          beta <-  calculate_trend_logistic_regression(denominator = denominator_value,
+                                                       numerator = numerator_value,
+                                                       year_col = time_value,
+                                                       trend_direction_only = TRUE)
 
-    results <- bind_rows(df_results)
+          test_statistic <- calculate_trend_logistic_regression(denominator = denominator_value,
+                                                                numerator = numerator_value,
+                                                                year_col = time_value,
+                                                                trend_direction_only = FALSE)
+
+          if (test_statistic > 9.5495) {
+
+            opposite_found <- FALSE
+
+            for (j in 1:length(time_value)) {
+
+              beta_sub <- calculate_trend_logistic_regression(denominator = denominator_value[-j],
+                                                              numerator = numerator_value[-j],
+                                                              year_col = time_value[-j],
+                                                              trend_direction_only = TRUE)
+
+              if (sign(beta_sub) != sign(beta)) {
+
+                opposite_found <- TRUE
+                break
+              }
+            }
+
+            if (opposite_found) {
+
+              df$RecentTrend[i] <- "No significant change"
+              df$RecentTrendReason[i] <- paste0("Outlier found")
+            } else {
+              df$RecentTrend[i] <- ifelse(beta < 0, "decreasing", "increasing")
+              df$RecentTrendReason[i] <- "No outliers and chi-square is bigger than 9.5495"
+            }
+
+          } else {
+            df$RecentTrend[i] <- "No significant change"
+            df$RecentTrendReason[i] <- "chi-square is less than 9.5495"
+          }
+        }
+
+        return(df)
+
+      }
+
+  })
+
+  results <- bind_rows(df_results)
 
 
-    return(results)
+  return(results)
 }
