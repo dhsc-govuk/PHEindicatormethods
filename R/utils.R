@@ -747,12 +747,13 @@ derive_proportion_element <- function(data, numerator, denominator, value){
 
 
 # ------------------------------------------------------------------------------
-#' function to test for trend significance for proportions
+#' function to test for trend significance and direction for proportions
 #'
 #' @param denominator field name from data containing the population(s) in the sample; unquoted string; no default
 #' @param numerator field name from data containing the observed numbers of cases in the sample meeting the required condition; unquoted string; no default
 #' @param year_col field name within the data that contains time period values; unquoted string; numeric
-#' @param trend_direction_only
+#' @param trend_direction_only option to calculate the trend direction or the significance. When TRUE, the trend direction will
+#' be calculated; when FALSE the significance is calculated; logical; default FALSE
 #'
 #'
 #' @noRd
@@ -819,14 +820,19 @@ calculate_trend_logistic_regression <- function(denominator, numerator,
 
 
 # ------------------------------------------------------------------------------
-#' function to test for trend significance for non-proportions
+#' function to test for trend significance and trend direction for non-proportions
 #'
 #' @param value field name within data that contains the indicator value; unquoted string; no default
 #' @param year_col field name within the data that contains time period values; unquoted string; numeric
-#' @param lower_ci field name within data that contains 95 percent lower confidence limit of indicator value (to calculate standard error of indicator value).
+#' @param lower_ci field name within data that contains  lower confidence limit of indicator value (to calculate standard error of indicator value).
 #' lower_ci is not needed for "proportions". unquoted string; no default
-#' @param upper_ci field name within data that contains 95 percent upper confidence limit of indicator value (to calculate standard error of indicator value).
+#' @param upper_ci field name within data that contains  upper confidence limit of indicator value (to calculate standard error of indicator value).
 #' upper_ci is not needed for "proportions". unquoted string; no default
+#' @param confidence confidence level used to derive standard errors; numeric between 0.9 and 0.9999 or 90 and 99.99; default 0.95
+#' @param trend_direction_only option to calculate the trend direction or the significance. When TRUE, the trend direction will
+#' be calculated; when FALSE the significance is calculated; logical; default FALSE
+#'
+#' @importFrom stats qnorm
 #'
 #' @noRd
 #'
@@ -834,15 +840,18 @@ calculate_trend_logistic_regression <- function(denominator, numerator,
 
 calculate_trend_weighted_regression<- function(value,
                                                year_col,
-                                               lower_cl=NULL,
-                                               upper_cl =NULL,
+                                               lower_cl= NULL,
+                                               upper_cl = NULL,
+                                               confidence = 0.95,
                                                trend_direction_only = FALSE){
 
   upper_cl <- as.numeric(upper_cl)
   lower_cl <- as.numeric(lower_cl)
 
+  z_score_2 <- qnorm(1 - (1 - confidence) / 2 ) * 2
 
-  sigma_2 <- ((upper_cl - lower_cl) / 3.92)^2
+
+  sigma_2 <- ((upper_cl - lower_cl) / z_score_2)^2
   t_2 <- year_col^2
   sum_1_sigma_2 <- sum(1 / sigma_2)
   sum_valuet_sigma_2 <- sum((value * year_col) / sigma_2)

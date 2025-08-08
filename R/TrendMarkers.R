@@ -4,26 +4,22 @@
 #' @param value field name within data that contains the indicator value. value field is not needed for "proportion"; unquoted string; no default
 #' @param denominator field name from data containing the population(s) in the sample; unquoted string; no default
 #' @param numerator  field name from data containing the observed numbers of cases in the sample meeting the required condition; unquoted string; no default
-#' @param t field name within the data that contains time period values; unquoted string; numeric
+#' @param year_col field name within the data that contains time period values; unquoted string; numeric
 #' @param value_type indicates the indicator type (proportion, other, dsr); quoted string
 #' @param lower_ci field name within data that contains 95 percent lower confidence limit of indicator value (to calculate standard error of indicator value).
 #' lower_ci is not needed for "proportions". unquoted string; no default
 #' @param upper_ci field name within data that contains 95 percent upper confidence limit of indicator value (to calculate standard error of indicator value).
 #' upper_ci is not needed for "proportions". unquoted string; no default
-#' @param denominator_transform option to transform denominator if denominator is missing. For directly standardised rates, the populations may be present, but the denominators
-#' should still be transformed and the derived denominators used; logical; default FALSE
-#' @param numerator_transform option to transform numerator if numerator is missing; logical; default FALSE
+#' @param confidence confidence level used to derive standard errors; numeric between 0.9 and 0.9999 or 90 and 99.99; default 0.95
 #' @param multiplier the multiplier that the rate is normalised with (ie, per 100,000). Multiplier is not
 #' needed for "proportion"; numeric; default = 1
 #'
-#' @return a tibble with the 5 most recent data points with the trend direction and reasond for the
+#' @return a tibble with the 5-year rolling recent trend showing trend direction and the reason for the
 #' trend for each subgroup of the inputted data.frame.
 #'
 #'
 #' @import dplyr
 #' @importFrom purrr map
-#' @importFrom rlang quo_is_null is_quosure
-#' @importFrom rlang := .data
 #' @export
 #'
 #'
@@ -62,19 +58,16 @@
 #'
 #'
 #' @section Notes: Tests must only be applied when the following conditions apply:
-#' At least 5 points in the time series must be available: the most recent 5 points will be used, and these must be equally
-#' spaced, eg the last five 1-year figures with no missing values.
 #'
-#' Time series points must be non-overlapping, ie single years, or non-overlapping 3-year periods.  The tests are not valid if
-#' applied to rolling averages, eg 2021-23, 2022-24,… as these points are not independent of each other.
+#' There must be at least five points in the series
+#' Time periods must be independent of one another: not overlapping, or rolling time periods
+#' Data must be for years: monthly or quarterly data are not tested
+#' Indicator type is one of the following: rate (crude, directly standardised or indirectly standardised), proportion (crude or indirectly standardised), ratio (crude, indirectly standardised or rate ratio), life expectancy, slope index of inequality, excess risk, mean, median, gap
+#' There must be no breaks in the series (the method described here can be applied to time series with missing values or varying time intervals, but this is not currently implemented in Fingertips)
+#' For indicator types other than proportions (crude or indirectly standardised) the indicator values must have confidence intervals.
 #'
-#' For proportions all points must have counts and denominators.
-#'
-#' For all indicators other than proportions all points must have upper and lower 95% confidence limits.
-#'
-#' If there are only indicator values and numerators are present the denominator needs to be calculated
-#' For directly standardised rates, the populations may be present, but the denominators
-#' should still be calculated as above and these derived denominators used.
+#' For proportions there must be a numerator and denominator present. If there are only indicator values and numerators are present the denominator will be calculated or
+#' if there are only indicator values and denominators are present the numerator will be calculated
 #'
 #'
 #'
@@ -86,9 +79,10 @@ assign_trend_markers <- function(data,
                                  value,
                                  denominator,
                                  numerator,
-                                 value_type = c("proportion", "other"),
+                                 value_type,
                                  lower_cl,
                                  upper_cl,
+                                 confidence = 0.95,
                                  multiplier = 1) {
 
   if (missing(data)) {
@@ -99,8 +93,13 @@ assign_trend_markers <- function(data,
     stop("function assign_trend_markers requires the year_col field")
   }
 
-  if (!(value_type %in% c("proportion", "other"))) {
-    stop('value_type should be either "proportion", "other"')
+  if (missing(value_type) || !(value_type %in% c("proportion", "other"))) {
+    stop('function assign_trend_markers requires the value_type to be either "proportion" or "other"')
+  }
+
+
+  if ((confidence < 0.9)|(confidence > 1 & confidence < 90)|(confidence > 100)) {
+    stop("confidence level must be between 90 and 100 or between 0.9 and 1")
   }
 
 
@@ -115,6 +114,10 @@ assign_trend_markers <- function(data,
      stop(paste('function assign_trend_markers requires value when value_type is "other"'))
 
     }
+  }
+
+  if (confidence >= 90) {
+    confidence <- confidence / 100
   }
 
 
@@ -224,6 +227,7 @@ assign_trend_markers <- function(data,
           beta <- calculate_trend_weighted_regression(value = values, year_col= time_value,
                                                       lower_cl = lower_cl_value,
                                                       upper_cl = upper_cl_value,
+                                                      confidence = confidence,
                                                       trend_direction_only  = TRUE)
 
 
@@ -231,6 +235,7 @@ assign_trend_markers <- function(data,
           test_statistic <- calculate_trend_weighted_regression(value = values, year_col= time_value,
                                                                 lower_cl = lower_cl_value,
                                                                 upper_cl = upper_cl_value,
+                                                                confidence = confidence,
                                                                 trend_direction_only = FALSE)
 
 
@@ -244,6 +249,7 @@ assign_trend_markers <- function(data,
               beta_sub <- calculate_trend_weighted_regression(value = values[-j], year_col= time_value[-j],
                                                               lower_cl = lower_cl_value[-j],
                                                               upper_cl = upper_cl_value[-j],
+                                                              confidence = confidence,
                                                               trend_direction_only  = TRUE)
 
               if (sign(beta_sub) != sign(beta)) {
