@@ -130,26 +130,34 @@ calculate_yll <- function(data,
 
   # calculate YLL and CIs
     ylls <- data %>%
-      mutate(yll=(yll * x *(stdpop/n)),
-             numerator=(yll * x ),
-             err_frac =((stdpop/n)^2) * x * ((yll)^2)) %>%
-      summarise(total_count = sum(numerator),
+      mutate(yll=(yll * x *stdpop / sum(stdpop) / n),
+      #mutate(yll=(yll * x *(stdpop/n)),
+             #numerator=(yll * x ),
+      err_frac = (yll/x)^2 * x) |>
+             #err_frac =((stdpop/n)^2) * x * ((yll)^2)) %>%
+      summarise(total_count = sum(x),
+      #summarise(total_count = sum(numerator),
                 total_pop = sum(n),
-                value = sum(yll),
+      value = sum(yll) * multiplier,
+                #value = sum(yll),
                 err_frac = sum(err_frac),
-                lowercl = value + sqrt((err_frac/sum(x, na.rm=TRUE))) *
-                  (byars_lower(sum(x, na.rm=TRUE), conf1) - sum(x, na.rm=TRUE)),
-                uppercl = value + sqrt((err_frac/sum(x, na.rm=TRUE))) *
-                  (byars_upper(sum(x, na.rm=TRUE), conf1) - sum(x, na.rm=TRUE)),
+                lowercl = value + (sqrt((err_frac/sum(x, na.rm=TRUE))) *
+        (byars_lower(sum(x, na.rm=TRUE), conf1) - sum(x, na.rm=TRUE)) * multiplier),
+                  #(byars_lower(sum(x, na.rm=TRUE), conf1) - sum(x, na.rm=TRUE)),
+                uppercl = value + (sqrt((err_frac/sum(x, na.rm=TRUE))) *
+      (byars_upper(sum(x, na.rm=TRUE), conf1) - sum(x, na.rm=TRUE)) * multiplier),
+                  #(byars_upper(sum(x, na.rm=TRUE), conf1) - sum(x, na.rm=TRUE)),
                 lower99_8cl = case_when(
                   is.na(conf2) ~ NA_real_,
-                  .default = value + sqrt((err_frac/sum(x, na.rm=TRUE))) *
-                  (byars_lower(sum(x, na.rm=TRUE), min(conf2, 1, na.rm = TRUE)) - sum(x, na.rm=TRUE))
+                  .default = value + (sqrt((err_frac/sum(x, na.rm=TRUE))) *
+                    (byars_lower(sum(x, na.rm=TRUE), min(conf2, 1, na.rm = TRUE)) - sum(x, na.rm=TRUE)) * multiplier)
+                  #(byars_lower(sum(x, na.rm=TRUE), min(conf2, 1, na.rm = TRUE)) - sum(x, na.rm=TRUE))
                   ),
                 upper99_8cl = case_when(
                   is.na(conf2) ~ NA_real_,
-                  .default = value + sqrt((err_frac/sum(x, na.rm=TRUE)))*
-                  (byars_upper(sum(x, na.rm=TRUE), min(conf2, 1, na.rm = TRUE)) - sum(x, na.rm=TRUE))
+                  .default = value + (sqrt((err_frac/sum(x, na.rm=TRUE)))*
+                    (byars_upper(sum(x, na.rm=TRUE), min(conf2, 1, na.rm = TRUE)) - sum(x, na.rm=TRUE)) * multiplier)
+                     #(byars_upper(sum(x, na.rm=TRUE), min(conf2, 1, na.rm = TRUE)) - sum(x, na.rm=TRUE))
                   ),
                 .groups = "keep") %>%
       select(-err_frac) %>%
