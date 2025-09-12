@@ -728,15 +728,12 @@ derive_proportion_element <- function(data, numerator, denominator, value){
 
   if (missing(denominator)){
 
-
-
-  df <- data %>%
-    mutate(denominator = .data[[numerator]] / .data[[value]])
+    df <- data %>%
+      mutate(denominator = (.data[[numerator]] / .data[[value]]) * 100)
 
   } else if (missing(numerator)) {
-
-  df <- data %>%
-    mutate(numerator = .data[[denominator]] * .data[[value]])
+    df <- data %>%
+      mutate(numerator = (.data[[denominator]] * .data[[value]]) / 100)
 
   }
 
@@ -752,8 +749,7 @@ derive_proportion_element <- function(data, numerator, denominator, value){
 #' @param denominator field name from data containing the population(s) in the sample; unquoted string; no default
 #' @param numerator field name from data containing the observed numbers of cases in the sample meeting the required condition; unquoted string; no default
 #' @param year_col field name within the data that contains time period values; unquoted string; numeric
-#' @param trend_direction_only option to calculate the trend direction or the significance. When TRUE, the trend direction will
-#' be calculated; when FALSE the significance is calculated; logical; default FALSE
+#' @param trend_calculation option to calculate the trend direction or the significance (trend_direction, significance); quoted string; default 'significance'
 #'
 #'
 #' @noRd
@@ -763,10 +759,10 @@ derive_proportion_element <- function(data, numerator, denominator, value){
 
 calculate_trend_logistic_regression <- function(denominator, numerator,
                                                 year_col,
-                                                trend_direction_only =FALSE){
+                                                trend_calculation = 'significance'){
 
 
-  if (trend_direction_only == TRUE){
+  if (trend_calculation == 'trend_direction'){
 
     value <- numerator / denominator
 
@@ -791,7 +787,7 @@ calculate_trend_logistic_regression <- function(denominator, numerator,
     return(beta)
 
 
-  } else {
+  } else if (trend_calculation == 'significance') {
 
     denominator <-as.numeric(denominator)
     numerator <- as.numeric(numerator)
@@ -829,8 +825,7 @@ calculate_trend_logistic_regression <- function(denominator, numerator,
 #' @param upper_ci field name within data that contains  upper confidence limit of indicator value (to calculate standard error of indicator value).
 #' upper_ci is not needed for "proportions". unquoted string; no default
 #' @param confidence confidence level used to derive standard errors; numeric between 0.9 and 0.9999 or 90 and 99.99; default 0.95
-#' @param trend_direction_only option to calculate the trend direction or the significance. When TRUE, the trend direction will
-#' be calculated; when FALSE the significance is calculated; logical; default FALSE
+#' @param trend_calculation option to calculate the trend direction or the significance (trend_direction, significance); quoted string; default 'significance'
 #'
 #' @importFrom stats qnorm
 #'
@@ -843,7 +838,7 @@ calculate_trend_weighted_regression<- function(value,
                                                lower_cl= NULL,
                                                upper_cl = NULL,
                                                confidence = 0.95,
-                                               trend_direction_only = FALSE){
+                                               trend_calculation = 'trend_direction'){
 
   upper_cl <- as.numeric(upper_cl)
   lower_cl <- as.numeric(lower_cl)
@@ -865,11 +860,11 @@ calculate_trend_weighted_regression<- function(value,
 
   beta <- beta_numerator / beta_denominator
 
-  if (trend_direction_only == TRUE){
+  if (trend_calculation == 'trend_direction'){
 
     return(beta)
 
-  } else{
+  } else if (trend_calculation == 'significance'){
 
 
   variance_beta <-sum_1_sigma_2 / ((sum_1_sigma_2 * sum_t2_sigma_2 - sum_t_sigma_2^2))

@@ -203,6 +203,19 @@ SII_test_data <- read_excel("tests/testthat/testdata_SII.xlsx")
 SII_test_grouped <- SII_test_data %>%
      group_by(Area, Grouping1, Grouping2)
 
+# assign_trend_markers data
+
+test_prop_trends   <- read_excel("tests/testthat/testdata_trend_markers.xlsx", sheet="testdata_prop_trends",   col_names=TRUE)
+
+test_prop_grouped   <- read_excel("tests/testthat/testdata_trend_markers.xlsx", sheet="testdata_prop_grouped",   col_names=TRUE)
+
+test_other_trends   <- read_excel("tests/testthat/testdata_trend_markers.xlsx", sheet="testdata_other_trends",   col_names=TRUE)
+
+
+test_other_6_trends   <- read_excel("tests/testthat/testdata_trend_markers.xlsx", sheet="testdata_other_6",   col_names=TRUE)
+
+test_other_grouped   <- read_excel("tests/testthat/testdata_trend_markers.xlsx", sheet="testdata_other_grouped",   col_names=TRUE)
+
 
 ########################################
 ###### SAVE TEST DATA TO PACKAGE #######
