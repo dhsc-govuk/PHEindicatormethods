@@ -82,10 +82,8 @@
 #' There must be at least five points in the series
 #' Time periods must be independent of one another: not overlapping, or rolling time periods
 #' Data must be for years: monthly or quarterly data are not to be tested
-#' Indicator type is one of the following: rate (crude, directly standardised or indirectly standardised), proportion (crude or indirectly standardised), ratio (crude, indirectly standardised or rate ratio), life expectancy, slope index of inequality, excess risk, mean, median, gap
-#' There must be no breaks in the series (the method described here can be applied to time series with missing values or varying time intervals, but this is not currently implemented in Fingertips)
+#' Indicator type is one of the following: rate (crude, directly standardised or indirectly standardised), proportion (crude or indirectly standardised), ratio (crude, indirectly standardised or rate ratio), life expectancy, slope index of inequality, excess risk, mean, median, gap)
 #' For indicator types other than proportions (crude or indirectly standardised) the indicator values must have confidence intervals.
-#'
 #' For proportions there must be a numerator and denominator present. If there are only indicator values and numerators are present the denominator will be calculated or
 #' if there are only indicator values and denominators are present the numerator will be calculated
 #'
