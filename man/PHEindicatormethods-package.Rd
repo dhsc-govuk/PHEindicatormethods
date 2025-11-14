@@ -6,12 +6,12 @@
 \alias{PHEindicatormethods-package}
 \title{PHEindicatormethods: Common Public Health Statistics and their Confidence Intervals}
 \description{
-Functions to calculate commonly used public health statistics and their confidence intervals using methods approved for use in the production of Public Health England indicators such as those presented via Fingertips (\url{https://fingertips.phe.org.uk/}). It provides functions for the generation of proportions, crude rates, means, directly standardised rates, indirectly standardised rates, standardised mortality ratios, slope and relative index of inequality and life expectancy. Statistical methods are referenced in the following publications. Breslow NE, Day NE (1987) \doi{10.1002/sim.4780080614}. Dobson et al (1991) \doi{10.1002/sim.4780100317}. Armitage P, Berry G (2002) \doi{10.1002/9780470773666}. Wilson EB. (1927) \doi{10.1080/01621459.1927.10502953}. Altman DG et al (2000, ISBN: 978-0-727-91375-3). Chiang CL. (1968, ISBN: 978-0-882-75200-6). Newell C. (1994, ISBN: 978-0-898-62451-9). Eayres DP, Williams ES (2004) \doi{10.1136/jech.2003.009654}. Silcocks PBS et al (2001) \doi{10.1136/jech.55.1.38}. Low and Low (2004) \doi{10.1093/pubmed/fdh175}. Fingertips Public Health Technical Guide: \url{https://fingertips.phe.org.uk/static-reports/public-health-technical-guidance/}.
+Functions to calculate commonly used public health statistics and their confidence intervals using methods approved for use in the production of Public Health England indicators such as those presented via Fingertips (\url{https://fingertips.phe.org.uk/}). It provides functions for the generation of proportions, crude rates, means, directly standardised rates, indirectly standardised rates, standardised mortality ratios, slope and relative index of inequality and life expectancy. Statistical methods are referenced in the following publications. Breslow NE, Day NE (1987) \doi{10.1002/sim.4780080614}. Dobson et al (1991) \doi{10.1002/sim.4780100317}. Armitage P, Berry G (2002) \doi{10.1002/9780470773666}. Wilson EB. (1927) \doi{10.1080/01621459.1927.10502953}. Altman DG et al (2000, ISBN: 978-0-727-91375-3). Chiang CL. (1968, ISBN: 978-0-882-75200-6). Newell C. (1994, ISBN: 978-0-898-62451-9). Eayres DP, Williams ES (2004) \doi{10.1136/jech.2003.009654}. Silcocks PBS et al (2001) \doi{10.1136/jech.55.1.38}. Low and Low (2004) \doi{10.1093/pubmed/fdh175}. Fingertips Public Health Technical Guide: \url{https://fingertips.phe.org.uk/profile/guidance/supporting-information/PH-methods/}.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item Report bugs at \url{https://github.com/ukhsa-collaboration/PHEindicatormethods/issues}
+  \item Report bugs at \url{https://github.com/dhsc-govuk/PHEindicatormethods/issues}
 }
 
 }
@@ -22,12 +22,13 @@ Other contributors:
 \itemize{
   \item Sebastian Fox [contributor]
   \item Matthew Francis [contributor]
-  \item Paul Fryers \email{paul.fryers@dhsc.gov.uk} [contributor]
   \item Emma Clegg [contributor]
   \item Annabel Westermann [contributor]
   \item Joshua Woolner [contributor]
   \item Charlotte Fellows \email{charlotte.fellows@dhsc.gov.uk} [contributor]
   \item Olivia Box Power \email{Olivia.BoxPower@dhsc.gov.uk} [contributor]
+  \item Paul Fryers \email{paul.fryers@dhsc.gov.uk} [reviewer]
+  \item Department of Health and Social Care [copyright holder]
 }
 
 }

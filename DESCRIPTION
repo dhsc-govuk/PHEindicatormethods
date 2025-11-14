@@ -1,6 +1,6 @@
 Package: PHEindicatormethods
 Type: Package
-Version: 2.1.0
+Version: 2.1.1
 Title: Common Public Health Statistics and their Confidence Intervals 
 Description: Functions to calculate commonly used public health statistics and 
     their confidence intervals using methods approved for use in the production  
@@ -20,16 +20,17 @@ Description: Functions to calculate commonly used public health statistics and
     Eayres DP, Williams ES (2004) <doi:10.1136/jech.2003.009654>.
     Silcocks PBS et al (2001) <doi:10.1136/jech.55.1.38>.
     Low and Low (2004) <doi:10.1093/pubmed/fdh175>.
-    Fingertips Public Health Technical Guide: <https://fingertips.phe.org.uk/static-reports/public-health-technical-guidance/>.
+    Fingertips Public Health Technical Guide: <https://fingertips.phe.org.uk/profile/guidance/supporting-information/PH-methods/>.
 Authors@R: c(person("Georgina", "Anderson", email = "georgina.anderson@dhsc.gov.uk", role = c("aut", "cre")),
              person("Sebastian", "Fox ", role = c("ctb")),
              person("Matthew", "Francis ", role = c("ctb")),
-             person("Paul", "Fryers ", email = "paul.fryers@dhsc.gov.uk", role = c("ctb")),
              person("Emma", "Clegg ",  role = c("ctb")),
              person("Annabel", "Westermann ", role = c("ctb")),
              person("Joshua", "Woolner ", role = c("ctb")),
              person("Charlotte", "Fellows ", email = "charlotte.fellows@dhsc.gov.uk", role = c("ctb")),
-             person("Olivia", "Box Power", email = "Olivia.BoxPower@dhsc.gov.uk", role = c("ctb"))
+             person("Olivia", "Box Power", email = "Olivia.BoxPower@dhsc.gov.uk", role = c("ctb")),
+             person("Paul", "Fryers ", email = "paul.fryers@dhsc.gov.uk", role = c("rev")),
+             person("Department of Health and Social Care", role = c("cph"))
              )
 BugReports: https://github.com/dhsc-govuk/PHEindicatormethods/issues
 Depends: R (>= 4.3.0)

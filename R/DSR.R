@@ -280,7 +280,7 @@ dsr_inner <- function(data,
 #'   Agency for Research on Cancer, World Health Organisation; 1987. \cr \cr (2)
 #'   Dobson A et al. Confidence intervals for weighted sums of Poisson
 #'   parameters. Stat Med 1991;10:457-62. \cr \cr (3) See the DSR chapter of the
-#'   [Fingertips Public Health Technical Guidance](https://fingertips.phe.org.uk/static-reports/public-health-technical-guidance/)
+#'   [Fingertips Public Health Technical Guidance](https://fingertips.phe.org.uk/profile/guidance/supporting-information/PH-methods/)
 #'
 #'
 #' @family PHEindicatormethods package functions

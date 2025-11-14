@@ -2,43 +2,44 @@
 
 ## Updates in this release
 
-* Added new `calculate_dsr` function as copy of `phe_dsr` function with additional 
-functionality which includes a breaking change
-* Soft-deprecated `phe_dsr` function (rename of function necessary to remove PHE 
-branding as this organisation has disbanded, this is being done 
-opportunistically as and when functions are updated for functional purposes).
+* No changes to functionality
+* Due to organisation restructure the code has moved to a new GitHub repo and 
+therefore the DESCRIPTION file has been updated as follows:  
+
+1 The BugReports section has been updated to signpost a new GitHub Issues URL.  
+2 The new organisation has been added as the Copyright holder.  
 
 
 ## R CMD check results on local installation
 
 There were no ERRORs, WARNINGS or NOTES on the following local installation:
-* Windows 10 install using R 4.4.1
+* Windows 11 install using R 4.4.1
 
 
 ## Other Test Environments 
 
-devtools::check_win_* on the following R versions gave no ERRORS OR WARNINGS.  
-All release versions showed 1 NOTE about new maintainer because the forename 
-and surname order has been corrected. The logs mention possible invalid URL but 
-this has been checked manually and the package passes the urlchecker::url_check():  
+devtools::check_win_* on the following R versions gave no ERRORS, WARNINGS or 
+NOTES:  
 
-* release:    R version 4.4.2 (2024-10-31 ucrt)  
-* oldrelease: R version 4.3.3 (2024-02-29)  
-* devel:      R under development (unstable) (2024-12-04 r87420 ucrt)  
+* release:    R version 4.5.2 (2025-10-31 ucrt)
+* oldrelease:  
+* devel:      R Under development (unstable) (2025-11-13 r89017 ucrt)  
 
-R-hub-v2 checks have been performed on the Consortium Runners for the following 
-platforms and all jobs completed successfully.
-<https://github.com/r-hub2/some-psychogenic-africanporcupine-PHEindicatormethods/actions>  
+</br>
 
-* linux (any version) ubuntu-latest on GitHub  
-* macOS (any version) macos-13 on GitHub  
-* clang20 R-devel (2024-10-09 r87215) Ubuntu 22.04.5 LTS  
-* ubuntu-release R-4.4.2 (2024-10-31) Ubuntu 22.04.5 LTS  
+GitHub actions, as set up by usethis::use_github_action("check-standard")
+to run R-CMD-check on the following platforms, are all passing:
+
+* macOS-latest (release)
+* ubuntu-latest (devel)
+* ubuntu-latest (oldrel-1)
+* ubuntu-latest (release)
+* windows-latest (release)
 
 
 ## CRAN Checks for existing package release
 
-CRAN checks for version v2.0.2 are all OK
+CRAN checks for version v2.1.0 are all OK
 
 
 ## Downstream dependencies

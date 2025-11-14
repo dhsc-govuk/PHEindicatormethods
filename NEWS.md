@@ -1,3 +1,10 @@
+## PHEindicatormethods v2.1.1
+* No updates to code functionality.
+* amended GitHub referencing for Bug Reports in DESCRIPTION as code repository 
+now owned and hosted by DHSC not UKHSA-collaboration.
+* Corrections to documentation where Fingertips URLs have been signposted as 
+some of these have changed.
+
 ## PHEindicatormethods v2.1.0
 This release makes changes to the DSR function
 * `calculate_dsr` function added to replace `phe_dsr`. The new calculate_dsr function has three new features:
