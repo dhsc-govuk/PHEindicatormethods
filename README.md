@@ -1,8 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- badges: start -->
 
-[![test-coverage](https://github.com/ukhsa-collaboration/PHEindicatormethods/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/ukhsa-collaboration/PHEindicatormethods/actions/workflows/test-coverage.yaml)
-[![R-CMD-check](https://github.com/ukhsa-collaboration/PHEindicatormethods/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ukhsa-collaboration/PHEindicatormethods/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/dhsc-govuk/PHEindicatormethods/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dhsc-govuk/PHEindicatormethods/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/dhsc-govuk/PHEindicatormethods/graph/badge.svg)](https://app.codecov.io/gh/dhsc-govuk/PHEindicatormethods)
+<!-- badges: end -->
 
 # PHEindicatormethods
 
