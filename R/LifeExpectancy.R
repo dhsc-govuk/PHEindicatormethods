@@ -19,7 +19,7 @@
 #' @param type type of output; can be "standard" or "full" (full contains
 #'   added details on the calculation within the dataframe); quoted
 #'   string; default full
-#' @inheritParams phe_dsr
+#' @inheritParams calculate_dsr
 #' @return returns a data frame containing the life expectancies and confidence intervals
 #'         for each le_age requested.  When type = 'full' additionally returns the cumulative
 #'         populations and deaths used in each LE calculation and metadata indicating parameters passed.
@@ -76,7 +76,6 @@
 #' (6) Eayres DP, Williams ES. Evaluation of methodologies for small area
 #' life expectancy estimation. J Epidemiol Community Health 2004;58:243-249 \cr \cr
 #'
-#' @inheritParams phe_dsr
 #' @import dplyr
 #' @importFrom purrr map_chr
 #' @importFrom tibble as_tibble

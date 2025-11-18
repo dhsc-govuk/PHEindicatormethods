@@ -1,43 +1,45 @@
-## CRAN submission of PHEindicatormethods package version 2.0.2
+## CRAN submission of PHEindicatormethods package version 2.1.1
 
 ## Updates in this release
 
-* Added functionality to `phe_quantile` and `phe_sii` functions, no breaking changes.
+* No changes to functionality
+* Due to organisation restructure the code has moved to a new GitHub repo and 
+therefore the DESCRIPTION file has been updated as follows:  
+
+1 The BugReports section has been updated to signpost a new GitHub Issues URL.  
+2 The new organisation has been added as the Copyright holder.  
+
 
 ## R CMD check results on local installation
 
-Windows 10 install using R 4.2.1:
-0 errors | 0 warnings | 0 notes
+There were no ERRORs, WARNINGS or NOTES on the following local installation:
+* Windows 11 install using R 4.4.1
 
 
 ## Other Test Environments 
 
-devtools::check_win_* on the following R versions gave no ERRORS OR WARNINGS.  
-The oldrelease check produced 1 NOTE about possible invalid DOIs, but these 
-have been checked manually and confirmed as correct:  
-* oldrelease: R version 4.2.3 (2023-03-15 ucrt)
-* release:    R version 4.3.2 (2023-10-31 ucrt) 
-* devel:      R Under development (unstable) (2024-01-23 r85822 ucrt)
+devtools::check_win_* on the following R versions gave no ERRORS or WARNINGS.
+There was 1 NOTE from R oldrelease about a possibly invalid url but this has
+been checked and is correct and is still functional.
 
+* release:    R version 4.5.2 (2025-10-31 ucrt)
+* oldrelease: R version 4.4.3 (2025-02-28 ucrt)
+* devel:      R Under development (unstable) (2025-11-13 r89017 ucrt)  
 
-GitHub actions successfully ran R CMD Check on:  
+</br>
 
-* Windows-latest (release)
-* ubuntu-latest (release)
+GitHub actions all passed running R-CMD-check on the following platforms:
+
+* macOS-latest (release)
 * ubuntu-latest (devel)
 * ubuntu-latest (oldrel-1)
-* macos-latest (release) 
-
-
-rhub::check() has been run on the following platforms with status OK.  
-* Ubuntu Linux 20.04.1 LTS, R-release, GCC (ubuntu-gcc-release)
-* Debian Linux, R-devel, clang, ISO-8859-15 locale (debian-clang-devel) 
-* Fedora Linux, R-devel, clang, gfortran (fedora-clang-devel)
+* ubuntu-latest (release)
+* windows-latest (release)
 
 
 ## CRAN Checks for existing package release
 
-CRAN checks for version v2.0.1 are all OK
+CRAN checks for version v2.1.0 are all OK
 
 
 ## Downstream dependencies

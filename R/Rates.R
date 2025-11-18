@@ -11,7 +11,7 @@
 #' @param n field name from data containing the rate denominators (eg
 #'   populations); unquoted string; no default
 #'
-#' @inheritParams phe_dsr
+#' @inheritParams calculate_dsr
 #'
 #' @import dplyr
 #' @importFrom rlang sym quo_name :=

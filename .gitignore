@@ -33,3 +33,5 @@ vignettes/*.R
 inst/doc
 data-raw
 README.Rmd
+/doc/
+/Meta/

@@ -6,7 +6,7 @@
 #' @param data a data.frame containing the data to calculate means for, pre-grouped if multiple means required; unquoted string; no default
 #' @param x field name from data containing the values to calculate the means for; unquoted string; no default
 #'
-#' @inheritParams phe_dsr
+#' @inheritParams calculate_dsr
 #'
 #' @import dplyr
 #' @importFrom rlang sym quo_name

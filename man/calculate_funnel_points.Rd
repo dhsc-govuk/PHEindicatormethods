@@ -56,6 +56,7 @@ Other PHEindicatormethods package functions:
 \code{\link{assign_funnel_significance}()},
 \code{\link{calculate_ISRate}()},
 \code{\link{calculate_ISRatio}()},
+\code{\link{calculate_dsr}()},
 \code{\link{calculate_funnel_limits}()},
 \code{\link{phe_dsr}()},
 \code{\link{phe_life_expectancy}()},

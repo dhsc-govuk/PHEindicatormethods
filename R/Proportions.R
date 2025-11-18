@@ -15,7 +15,7 @@
 #'   value can be passed if no confidence intervals are required.; numeric; default 0.95
 #' @param multiplier the multiplier used to express the final values (eg 100 = percentage); numeric; default 1
 #'
-#' @inheritParams phe_dsr
+#' @inheritParams calculate_dsr
 #'
 #' @return When type = "full", returns the original data.frame with the following appended:
 #'         proportion, lower confidence limit, upper confidence limit, confidence level, statistic and method

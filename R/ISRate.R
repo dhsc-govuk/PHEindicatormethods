@@ -25,7 +25,7 @@
 #'   count field (x) plus grouping columns required to join to data using the
 #'   same grouping column names; default = NULL
 #'
-#' @inheritParams phe_dsr
+#' @inheritParams calculate_dsr
 #'
 #' @import dplyr
 #' @importFrom stats qchisq

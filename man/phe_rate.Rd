@@ -23,8 +23,8 @@ all data and metadata); quoted string; default = "full"}
 
 \item{confidence}{the required level of confidence expressed as a number
 between 0.9 and 1 or a number between 90 and 100 or can be a vector of 0.95
-and 0.998, for example, to output both 95 percent and 99.8 percent percent CIs; numeric;
-default 0.95}
+and 0.998, for example, to output both 95 percent and 99.8 percent percent
+CIs; numeric; default 0.95}
 
 \item{multiplier}{the multiplier used to express the final values (eg 100,000
 = rate per 100,000); numeric; default 100,000}
@@ -72,6 +72,7 @@ Other PHEindicatormethods package functions:
 \code{\link{assign_funnel_significance}()},
 \code{\link{calculate_ISRate}()},
 \code{\link{calculate_ISRatio}()},
+\code{\link{calculate_dsr}()},
 \code{\link{calculate_funnel_limits}()},
 \code{\link{calculate_funnel_points}()},
 \code{\link{phe_dsr}()},

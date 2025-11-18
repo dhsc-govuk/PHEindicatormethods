@@ -1,10 +1,7 @@
 ---
 title: "Worked examples for phe_sii function"
 author: "Emma Clegg and Georgina Anderson"
-date: "`r Sys.Date()`"
-output: 
-  rmarkdown::html_vignette:
-    css: style.css
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Worked examples for phe_sii function}
   %\VignetteEngine{knitr::rmarkdown}
@@ -12,7 +9,10 @@ vignette: >
 ---
 
 ```{r output, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
 
 ```
 

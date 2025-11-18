@@ -1,8 +1,11 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- badges: start -->
 
-[![test-coverage](https://github.com/ukhsa-collaboration/PHEindicatormethods/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/ukhsa-collaboration/PHEindicatormethods/actions/workflows/test-coverage.yaml)
-[![R-CMD-check](https://github.com/ukhsa-collaboration/PHEindicatormethods/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/ukhsa-collaboration/PHEindicatormethods/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/dhsc-govuk/PHEindicatormethods/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/dhsc-govuk/PHEindicatormethods/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/dhsc-govuk/PHEindicatormethods/graph/badge.svg)](https://app.codecov.io/gh/dhsc-govuk/PHEindicatormethods)
+<!-- badges: end -->
 
 # PHEindicatormethods
 
@@ -22,7 +25,7 @@ functions in light of this organisational change.
 
 Any feedback would be appreciated and can be provided using the Issues
 section of the [PHEindicatormethods GitHub
-repository](https://github.com/ukhsa-collaboration/PHEindicatormethods).
+repository](https://github.com/dhsc-govuk/PHEindicatormethods).
 
 <br/> <br/>
 
@@ -47,7 +50,7 @@ with:
 ``` r
 if (!require(remotes)) install.packages("remotes")
 
-remotes::install_github("ukhsa-collaboration/PHEindicatormethods",
+remotes::install_github("dhsc-govuk/PHEindicatormethods",
                          build_vignettes = TRUE,
                          dependencies = TRUE,
                          build_opts = c("--no-resave-data"))

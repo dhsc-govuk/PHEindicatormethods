@@ -1,10 +1,7 @@
 ---
 title: "Introduction to PHEindicatormethods"
 author: "Georgina Anderson"
-date: "`r Sys.Date()`"
-output: 
-  rmarkdown::html_vignette:
-    css: style.css
+output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to PHEindicatormethods}
   %\VignetteEngine{knitr::rmarkdown}
@@ -14,8 +11,6 @@ vignette: >
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  error = TRUE,
-  purl=FALSE,
   comment = "#>"
 )
 ```
@@ -33,7 +28,7 @@ library(dplyr)
 
 ## Package functions
 
-This vignette covers the following functions available within the first release of the package (v1.0.8) but has been updated to apply to these functions in their latest release versions.  If further functions are added to the package in future releases these will be explained elsewhere.
+This vignette covers the following core functions available within PHEindicatormethods:
 
 | Function       | Type                      | Description                                 |
 |:------------------|:--------------------------|:--------------------------------------------|
@@ -42,10 +37,11 @@ This vignette covers the following functions available within the first release 
 |                   |                           |                                             |
 | phe_mean          | Aggregate                 | Performs a calculation on each grouping set |
 |                   |                           |                                             |
-| phe_dsr           | Aggregate, standardised   | Performs a calculation on each grouping set and requires additional reference inputs |
+| calculate_dsr     | Aggregate, standardised   | Performs a calculation on each grouping set and requires additional reference inputs |
 | calculate_ISRatio | Aggregate, standardised   | Performs a calculation on each grouping set and requires additional reference inputs |
 | calculate_ISRate  | Aggregate, standardised   | Performs a calculation on each grouping set and requires additional reference inputs |
 
+Other functions are introduced in separate vignettes.
 
 ## Non-aggregate functions
 
@@ -79,25 +75,22 @@ Here are some example code chunks to demonstrate these two functions and the arg
 phe_proportion(df, obs, pop)
 
 # specify confidence level for proportion
-phe_proportion(df, obs, pop, confidence=99.8)
+phe_proportion(df, obs, pop, confidence = 99.8)
 
-# specify to output proportions as percentages
-phe_proportion(df, obs, pop, multiplier=100)
+# specify multiplier to output proportions as percentages
+phe_proportion(df, obs, pop, multiplier = 100)
 
-# specify level of detail to output for proportion
-phe_proportion(df, obs, pop, confidence=99.8, multiplier=100)
-
-# specify level of detail to output for proportion and remove metadata columns
-phe_proportion(df, obs, pop, confidence=99.8, multiplier=100, type="standard")
+# specify multiplier for proportion, confidence level and remove metadata columns
+phe_proportion(df, obs, pop, confidence = 99.8, multiplier = 100, type = "standard")
 
 # default rate
 phe_rate(df, obs, pop)
 
-# specify rate parameters
-phe_rate(df, obs, pop, confidence=99.8, multiplier=100)
+# specify multiplier for rate and confidence level
+phe_rate(df, obs, pop, confidence = 99.8, multiplier = 100)
 
-# specify rate parameters and reduce columns output and remove metadata columns
-phe_rate(df, obs, pop, type="standard", confidence=99.8, multiplier=100)
+# specify multiplier for rate, confidence level and remove metadata columns
+phe_rate(df, obs, pop, type = "standard", confidence = 99.8, multiplier = 100)
 ```
 
 These functions can also return aggregate data if the input dataframes are grouped:
@@ -139,12 +132,12 @@ phe_mean(df,obs)
 # multiple means in a single execution with 99.8% confidence
 df %>%
     group_by(year) %>%
-        phe_mean(obs, confidence=0.998)
+        phe_mean(obs, confidence = 0.998)
 
 # multiple means in a single execution with 99.8% confidence and data-only output
 df %>%
     group_by(year) %>%
-        phe_mean(obs, type = "standard", confidence=0.998)
+        phe_mean(obs, type = "standard", confidence = 0.998)
 ```
 
 
@@ -169,68 +162,45 @@ head(df_std)
 
 
 
-#### Execute phe_dsr
-**INPUT:** The minimum input requirement for the phe_dsr function is a single data frame with columns representing the numerators and denominators for each standardisation category. This is sufficient if the data is:  
-
-* broken down into 19 standardisation categories per grouping set representing the 19 x 5-year age bands from 00-04 to 90+
-* sorted, within each grouping set, by these 19 age bands in ascending order 
-* to be standardised against the 2013 European Standard Population
-
-The 2013 European Standard Population is provided within the package in vector form (esp2013) and is used by default by this function.  Alternative standard populations can be used but must be provided by the user.  When the function joins a standard population vector to the input data frame it does this by position so it is important that the data is sorted accordingly.  **This is a user responsibility.**  
-
-The function can also accept standard populations provided as a column within the input data frame.  
-
-* standard populations provided as a vector - the vector and the input data frame must both contain rows for the same standardisation categories, and both must be sorted, within each grouping set, by these standardisation categories in the same order  
-
-* standard populations provided as a column within the input data frame - the standard populations can be appended to the input data frame by the user prior to execution of the function - if the data is grouped to generate multiple dsrs then the standard populations will need to be repeated and appended to the data rows for every grouping set. 
+#### Execute calculate_dsr
+**INPUT:** The minimum input requirement for the calculate_dsr function is a single data frame with columns representing the numerators and denominators and standard populations for each standardisation category. The standard populations must be appended to the input data frame by the user prior to execution of the function. The 2013 European Standard Population is provided within the package in vector form (`esp2013`), which you can join to your dataset. Alternative standard populations can be used but must be provided by the user.  
 
 **OUTPUT:** By default, the function outputs one row per grouping set containing the grouping variable values, the total count, the total population, the dsr, the lower 95% confidence limit, the upper 95% confidence limit, the confidence level, the statistic name and the method. 
 
-**OPTIONS:** If standard populations are being provided as a column within the input data frame then the user must specify this using the stdpoptype argument as the function expects a vector by default.  The function also accepts additional arguments to specify the standard populations, the level of confidence, the multiplier and a reduced level of detail to be output.
+**OPTIONS:** The function also accepts additional arguments to specify the level of confidence, the multiplier and a reduced level of detail to be output. It is also possible to calculate CIs when we can't assume events are independent - further details can be found in the DSR vignette.
 
-Here are some example code chunks to demonstrate the phe_dsr function and the arguments that can optionally be specified
+Here are some example code chunks to demonstrate the calculate_dsr function and the arguments that can optionally be specified
 
-```{r Execute phe_dsr}
+```{r Execute calculate_dsr}
+
+# Append the standard populations to the data frame
 # calculate separate dsrs for each area, year and sex
 df_std %>%
+    mutate(refpop = rep(esp2013, 40)) %>%
     group_by(area, year, sex) %>%
-    phe_dsr(obs, pop)
+    calculate_dsr(obs,pop, stdpop = refpop)
 
+
+# Append the standard populations to the data frame
 # calculate separate dsrs for each area, year and sex and drop metadata fields from output
 df_std %>%
+    mutate(refpop = rep(esp2013, 40)) %>%
     group_by(area, year, sex) %>%
-    phe_dsr(obs, pop, type="standard")
-
-# calculate same specifying standard population in vector form
-df_std %>%
-    group_by(area, year, sex) %>%
-    phe_dsr(obs, pop, stdpop = esp2013)
-
-# calculate the same dsrs by appending the standard populations to the data frame
-df_std %>%
-    mutate(refpop = rep(esp2013,40)) %>%
-    group_by(area, year, sex) %>%
-    phe_dsr(obs,pop, stdpop=refpop, stdpoptype="field")
+    calculate_dsr(obs,pop, stdpop = refpop, type = "standard")
 
 # calculate for under 75s by filtering out records for 75+ from input data frame and standard population
 df_std %>%
-    filter(ageband <= 70) %>%
-    group_by(area, year, sex) %>%
-    phe_dsr(obs, pop, stdpop = esp2013[1:15])
-    
-# calculate separate dsrs for persons for each area and year)
-df_std %>%
-    group_by(area, year, ageband) %>%
-    summarise(obs = sum(obs),
-              pop = sum(pop),
-              .groups = "drop_last") %>%
-    phe_dsr(obs,pop)
+  filter(ageband <= 70) %>%
+  mutate(refpop = rep(esp2013[1:15], 40)) %>%
+  group_by(area, year, sex) %>%
+  calculate_dsr(obs, pop, stdpop = refpop)
+
 ```
 
 
 
 #### Execute calculate_ISRatio and calculate_ISRate
-**INPUT:** Unlike the phe_dsr function, there is no default standard or reference data for the calculate_ISRatio and calculate_ISRate functions.  These functions take a single data frame as input, with columns representing the numerators and denominators for each standardisation category, plus reference numerators and denominators for each standardisation category.  
+**INPUT:** These functions take a single data frame as input, with columns representing the numerators and denominators for each standardisation category, plus reference numerators and denominators for each standardisation category.  
 
 The reference data can either be provided in a separate data frame/vectors or as columns within the input data frame:  
 
@@ -272,7 +242,7 @@ df_std %>%
     mutate(refobs = rep(df_ref$obs,40),
            refpop = rep(df_ref$pop,40)) %>%
     group_by(area, year, sex) %>%
-    calculate_ISRatio(obs, pop, refobs, refpop, refpoptype="field",
+    calculate_ISRatio(obs, pop, refobs, refpop, refpoptype = "field",
                       type = "standard")
 
 ```
@@ -292,7 +262,7 @@ df_std %>%
     mutate(refobs = rep(df_ref$obs,40),
            refpop = rep(df_ref$pop,40)) %>%
     group_by(area, year, sex) %>%
-    calculate_ISRate(obs, pop, refobs, refpop, refpoptype="field",
+    calculate_ISRate(obs, pop, refobs, refpop, refpoptype = "field",
                      type = "standard")
 
 ```

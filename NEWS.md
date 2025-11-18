@@ -1,3 +1,18 @@
+## PHEindicatormethods v2.1.1
+* No updates to code functionality.
+* amended GitHub referencing for Bug Reports in DESCRIPTION as code repository 
+now owned and hosted by DHSC not UKHSA-collaboration.
+* Corrections to documentation where Fingertips URLs have been signposted as 
+some of these have changed.
+
+## PHEindicatormethods v2.1.0
+This release makes changes to the DSR function
+* `calculate_dsr` function added to replace `phe_dsr`. The new calculate_dsr function has three new features:
+1. Users can now specify whether events are independent.  For non-independent events the data must be broken down by event frequency and the function will perform an adjustment to the confidence interval calculation. 
+2. The stdpoptype argument that was available in `phe_dsr` is not available in `calculate_dsr` and the user is now required to provide the standard populations as a field in the input dataframe. This is to negate the risk of incorrectly joining the standard population vector by position that was possible when using the function with stdpoptype = "vector".
+3. Because of point 2 above, users can now calculate DSRs for groups containing different numbers of age bands in a single execution (for example DSRs for all age populations and DSRs for under 75s).   
+* `phe_dsr` has been soft deprecated - please replace all calls to this function with `calculate_dsr` before September 2025, after which date the phe_dsr function will be removed from the package. Previous calls to `phe_dsr` with stdpoptype set to "field" can be replaced directly with `calculate_dsr`, however, the stdpoptype argument has been deprectaed so will need to be removed and the stdpop argument no longer has a default so this column name will need to be provided explicitly. For previous calls to `phe_dsr` with stdpoptype = "vector", the user will need to append the standard populations to their input data frame before calling the `calculate_dsr` function and provide the stdpop argument explicitly.
+
 ## PHEindicatormethods v2.0.2
 * Amended phe_quantile function so it will not produce quantiles when the number of small areas within a group is less than the number of quantiles requested. A warning will be generated when quantiles cannot be produced for this reason.
 * removed the highergeog argument from phe_quantile function, previously soft-deprecated in v1.2.0.

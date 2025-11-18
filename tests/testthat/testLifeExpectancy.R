@@ -245,10 +245,10 @@ test_that("LE and CIs calculate correctly",{
   expect_equal(round(test4[, cols_to_test], n), round(answer1, n),
                info = "custom age bands in wrong order")
   expect_equal(round(test5[, cols_to_test], n), round(answer1[3, ], n),
-               check.attributes = FALSE, #because the row names are different and we are only interested in values
+               ignore_attr = TRUE, #because the row names are different and we are only interested in values
                info = "return single age band")
   expect_equal(test6, answer2,
-               check.attributes = FALSE, #because the row names are different and we are only interested in values
+               ignore_attr = TRUE, #because the row names are different and we are only interested in values
                info = "type = 'full' with two filters")
   expect_equal(sum(!is.na(test_neg[, cols_to_test])), 0,
                info = "negative deaths produces only NAs")
@@ -260,8 +260,9 @@ test_that("LE and CIs calculate correctly",{
                info = "missing age band produces only NAs")
   expect_equal(nrow(test_grouped_with_warnings), nrow(df_grouped_with_warnings),
                info = "correct number of rows for grouped calcs")
-  expect_equivalent(test7[, c("lowercl", "uppercl")],
-                    test8[, c("lower99_8cl", "upper99_8cl")])
+  expect_equal(test7[, c("lowercl", "uppercl")],
+               test8[, c("lower99_8cl", "upper99_8cl")],
+               ignore_attr = TRUE)
   expect_equal(round(test_widecis[, c("value", "lower95_0cl", "upper95_0cl")], n),
                round(answer_widecis, n),
                info = "suppress wide CI > 20")

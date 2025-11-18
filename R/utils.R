@@ -22,7 +22,7 @@ na.zero <- function (y) {
 #'
 #' @param x the observed numbers of events; numeric vector; no default
 #'
-#' @inheritParams phe_dsr
+#' @inheritParams calculate_dsr
 #'
 #' @return Returns lower confidence limits for observed numbers of events using Byar's method (1)
 #'
@@ -81,7 +81,7 @@ byars_lower <- function(x, confidence = 0.95) {
 #'
 #' @param x the observed numbers of events; numeric vector; no default
 #'
-#' @inheritParams phe_dsr
+#' @inheritParams calculate_dsr
 #'
 #' @return Returns upper confidence limits for observed numbers of events using Byar's method (1)
 #'
@@ -133,7 +133,7 @@ byars_upper <- function(x, confidence = 0.95) {
 #' @param x the observed numbers of cases in the samples meeting the required condition; numeric vector; no default
 #' @param n the numbers of cases in the samples; numeric vector; no default
 #'
-#' @inheritParams phe_dsr
+#' @inheritParams calculate_dsr
 #'
 #' @return Returns lower confidence limits for observed numbers of events using the Wilson Score method (1,2)
 #'
@@ -197,7 +197,7 @@ wilson_lower <- function(x, n, confidence = 0.95) {
 #' @param x the observed numbers of cases in the samples meeting the required condition; numeric vector; no default
 #' @param n the numbers of cases in the samples; numeric vector; no default
 #'
-#' @inheritParams phe_dsr
+#' @inheritParams calculate_dsr
 #'
 #' @return Returns upper confidence limits for observed numbers of events using the Wilson Score method (1,2)
 #'
