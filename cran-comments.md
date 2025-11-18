@@ -1,4 +1,4 @@
-## CRAN submission of PHEindicatormethods package version 2.1.0
+## CRAN submission of PHEindicatormethods package version 2.1.1
 
 ## Updates in this release
 
@@ -18,17 +18,17 @@ There were no ERRORs, WARNINGS or NOTES on the following local installation:
 
 ## Other Test Environments 
 
-devtools::check_win_* on the following R versions gave no ERRORS, WARNINGS or 
-NOTES:  
+devtools::check_win_* on the following R versions gave no ERRORS or WARNINGS.
+There was 1 NOTE from R oldrelease about a possibly invalid url but this has
+been checked and is correct and is still functional.
 
 * release:    R version 4.5.2 (2025-10-31 ucrt)
-* oldrelease:  
+* oldrelease: R version 4.4.3 (2025-02-28 ucrt)
 * devel:      R Under development (unstable) (2025-11-13 r89017 ucrt)  
 
 </br>
 
-GitHub actions, as set up by usethis::use_github_action("check-standard")
-to run R-CMD-check on the following platforms, are all passing:
+GitHub actions all passed running R-CMD-check on the following platforms:
 
 * macOS-latest (release)
 * ubuntu-latest (devel)
