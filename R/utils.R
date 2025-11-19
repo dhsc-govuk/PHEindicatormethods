@@ -707,3 +707,175 @@ sigma_adjustment <- function(p, population, average_proportion, side, multiplier
   return(adj_return)
 }
 
+# ------------------------------------------------------------------------------
+#' Function to transform the denominator or numerator for trend markers
+#'
+#' If there are only indicator values and numerators are present the denominator needs to be calculated
+#' If there are only indicator values and denominators are present the numerator needs to be calculated
+#'
+#' @param data a data.frame containing the data to transform the denominator; unquoted string; no default
+#' @param numerator field name from data containing the observed numbers of cases in the sample meeting the required condition; unquoted string; no default
+#' @param denominator field name from data containing the population(s) in the sample; unquoted string; no default
+#' @param value field name within data that contains the indicator value; unquoted string; no default
+#'
+#' @noRd
+#'
+# ------------------------------------------------------------------------------
+
+
+
+derive_proportion_element <- function(data, numerator, denominator, value){
+
+  if (missing(denominator)){
+
+    df <- data %>%
+      mutate(denominator = (.data[[numerator]] / .data[[value]]) * 100)
+
+  } else if (missing(numerator)) {
+    df <- data %>%
+      mutate(numerator = (.data[[denominator]] * .data[[value]]) / 100)
+
+  }
+
+  return(df)
+
+}
+
+
+
+# ------------------------------------------------------------------------------
+#' function to test for trend significance and direction for proportions
+#'
+#' @param denominator field name from data containing the population(s) in the sample; unquoted string; no default
+#' @param numerator field name from data containing the observed numbers of cases in the sample meeting the required condition; unquoted string; no default
+#' @param year_col field name within the data that contains time period values; unquoted string; numeric
+#' @param trend_calculation option to calculate the trend direction or the significance (trend_direction, significance); quoted string; default 'significance'
+#'
+#'
+#' @noRd
+#'
+# ------------------------------------------------------------------------------
+
+
+calculate_trend_logistic_regression <- function(denominator, numerator,
+                                                year_col,
+                                                trend_calculation = 'significance'){
+
+
+  if (trend_calculation == 'trend_direction'){
+
+    value <- numerator / denominator
+
+
+    N <- length(value)
+
+
+    log_x <- log(value / (1 - value))
+    sum_log_x <- sum(log_x)
+    sum_log_x_t <- sum(log_x * year_col)
+    sum_t <- sum(year_col)
+    sum_log_x_sum_t <- sum_log_x * sum_t
+    sum_t2 <- sum(year_col^2)
+    t2_summed <- sum(year_col)^2
+
+
+    beta_numerator <- (N * sum_log_x_t) - sum_log_x_sum_t
+    beta_denominator <- (N * sum_t2) - t2_summed
+
+    beta <- beta_numerator / beta_denominator
+
+    return(beta)
+
+
+  } else if (trend_calculation == 'significance') {
+
+    denominator <-as.numeric(denominator)
+    numerator <- as.numeric(numerator)
+    year_col <- as.numeric(year_col)
+
+
+    sum_d <- sum(denominator)
+    sum_ct <- sum(numerator * year_col)
+    sum_c <- sum(numerator)
+    sum_dt <- sum(denominator * year_col)
+    t_2 <- year_col^2
+    sum_dt_2 <- sum(denominator * t_2)
+    dt2 <- sum_dt^2
+
+    x2_numerator <- sum_d * ((sum_d * sum_ct) - (sum_c * sum_dt))^2
+    x2_denominator <- sum_c * (sum_d - sum_c)  * (sum_d * sum_dt_2 - dt2)
+
+    x2 <- x2_numerator / x2_denominator
+
+    return(x2)
+
+
+  }
+
+}
+
+
+# ------------------------------------------------------------------------------
+#' function to test for trend significance and trend direction for non-proportions
+#'
+#' @param value field name within data that contains the indicator value; unquoted string; no default
+#' @param year_col field name within the data that contains time period values; unquoted string; numeric
+#' @param lower_ci field name within data that contains  lower confidence limit of indicator value (to calculate standard error of indicator value).
+#' lower_ci is not needed for "proportions". unquoted string; no default
+#' @param upper_ci field name within data that contains  upper confidence limit of indicator value (to calculate standard error of indicator value).
+#' upper_ci is not needed for "proportions". unquoted string; no default
+#' @param confidence confidence level used to derive standard errors; numeric between 0.9 and 0.9999 or 90 and 99.99; default 0.95
+#' @param trend_calculation option to calculate the trend direction or the significance (trend_direction, significance); quoted string; default 'significance'
+#'
+#' @importFrom stats qnorm
+#'
+#' @noRd
+#'
+# ------------------------------------------------------------------------------
+
+calculate_trend_weighted_regression<- function(value,
+                                               year_col,
+                                               lower_cl= NULL,
+                                               upper_cl = NULL,
+                                               confidence = 0.95,
+                                               trend_calculation = 'trend_direction'){
+
+  upper_cl <- as.numeric(upper_cl)
+  lower_cl <- as.numeric(lower_cl)
+
+  z_score_2 <- qnorm(1 - (1 - confidence) / 2 ) * 2
+
+
+  sigma_2 <- ((upper_cl - lower_cl) / z_score_2)^2
+  t_2 <- year_col^2
+  sum_1_sigma_2 <- sum(1 / sigma_2)
+  sum_valuet_sigma_2 <- sum((value * year_col) / sigma_2)
+  sum_t_sigma_2 <- sum(year_col / sigma_2)
+  sum_value_sigma_2 <- sum(value / sigma_2)
+  sum_t2_sigma_2 <- sum(t_2 / sigma_2)
+
+  beta_numerator <- (sum_1_sigma_2 * sum_valuet_sigma_2) - (sum_t_sigma_2 * sum_value_sigma_2)
+  beta_denominator <- (sum_1_sigma_2 * sum_t2_sigma_2) - (sum_t_sigma_2)^2
+
+
+  beta <- beta_numerator / beta_denominator
+
+  if (trend_calculation == 'trend_direction'){
+
+    return(beta)
+
+  } else if (trend_calculation == 'significance'){
+
+
+  variance_beta <-sum_1_sigma_2 / ((sum_1_sigma_2 * sum_t2_sigma_2 - sum_t_sigma_2^2))
+
+
+  x2<- (beta^2) / variance_beta
+
+  return(x2)
+
+  }
+
+
+}
+
