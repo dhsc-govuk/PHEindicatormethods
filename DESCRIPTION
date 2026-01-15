@@ -1,6 +1,6 @@
 Package: PHEindicatormethods
 Type: Package
-Version: 2.1.0
+Version: 2.1.0.9000
 Title: Common Public Health Statistics and their Confidence Intervals 
 Description: Functions to calculate commonly used public health statistics and 
     their confidence intervals using methods approved for use in the production  
