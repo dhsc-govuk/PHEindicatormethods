@@ -48,18 +48,18 @@ phe_mean(df2,values,type="standard", confidence=0.998)
 
 }
 \seealso{
-Other PHEindicatormethods package functions: 
-\code{\link{assign_funnel_significance}()},
-\code{\link{calculate_ISRate}()},
-\code{\link{calculate_ISRatio}()},
-\code{\link{calculate_dsr}()},
-\code{\link{calculate_funnel_limits}()},
-\code{\link{calculate_funnel_points}()},
-\code{\link{phe_dsr}()},
-\code{\link{phe_life_expectancy}()},
-\code{\link{phe_proportion}()},
-\code{\link{phe_quantile}()},
-\code{\link{phe_rate}()},
-\code{\link{phe_sii}()}
+Other PHEindicatormethods package functions:
+\code{\link[=assign_funnel_significance]{assign_funnel_significance()}},
+\code{\link[=calculate_ISRate]{calculate_ISRate()}},
+\code{\link[=calculate_ISRatio]{calculate_ISRatio()}},
+\code{\link[=calculate_dsr]{calculate_dsr()}},
+\code{\link[=calculate_funnel_limits]{calculate_funnel_limits()}},
+\code{\link[=calculate_funnel_points]{calculate_funnel_points()}},
+\code{\link[=phe_dsr]{phe_dsr()}},
+\code{\link[=phe_life_expectancy]{phe_life_expectancy()}},
+\code{\link[=phe_proportion]{phe_proportion()}},
+\code{\link[=phe_quantile]{phe_quantile()}},
+\code{\link[=phe_rate]{phe_rate()}},
+\code{\link[=phe_sii]{phe_sii()}}
 }
 \concept{PHEindicatormethods package functions}

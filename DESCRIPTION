@@ -1,6 +1,6 @@
 Package: PHEindicatormethods
 Type: Package
-Version: 2.1.1
+Version: 2.1.2
 Title: Common Public Health Statistics and their Confidence Intervals 
 Description: Functions to calculate commonly used public health statistics and 
     their confidence intervals using methods approved for use in the production  
@@ -54,6 +54,6 @@ Suggests:
     testthat (>= 3.0.0),
     withr (>= 3.0.0)
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.0
