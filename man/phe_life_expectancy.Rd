@@ -164,19 +164,19 @@ small populations. National Statistics  Methodological Series No 33. HMSO 2003. 
 life expectancy estimation. J Epidemiol Community Health 2004;58:243-249 \cr \cr
 }
 \seealso{
-Other PHEindicatormethods package functions: 
-\code{\link{assign_funnel_significance}()},
-\code{\link{calculate_ISRate}()},
-\code{\link{calculate_ISRatio}()},
-\code{\link{calculate_dsr}()},
-\code{\link{calculate_funnel_limits}()},
-\code{\link{calculate_funnel_points}()},
-\code{\link{phe_dsr}()},
-\code{\link{phe_mean}()},
-\code{\link{phe_proportion}()},
-\code{\link{phe_quantile}()},
-\code{\link{phe_rate}()},
-\code{\link{phe_sii}()}
+Other PHEindicatormethods package functions:
+\code{\link[=assign_funnel_significance]{assign_funnel_significance()}},
+\code{\link[=calculate_ISRate]{calculate_ISRate()}},
+\code{\link[=calculate_ISRatio]{calculate_ISRatio()}},
+\code{\link[=calculate_dsr]{calculate_dsr()}},
+\code{\link[=calculate_funnel_limits]{calculate_funnel_limits()}},
+\code{\link[=calculate_funnel_points]{calculate_funnel_points()}},
+\code{\link[=phe_dsr]{phe_dsr()}},
+\code{\link[=phe_mean]{phe_mean()}},
+\code{\link[=phe_proportion]{phe_proportion()}},
+\code{\link[=phe_quantile]{phe_quantile()}},
+\code{\link[=phe_rate]{phe_rate()}},
+\code{\link[=phe_sii]{phe_sii()}}
 }
 \author{
 Sebastian Fox, \email{sebastian.fox@phe.gov.uk}

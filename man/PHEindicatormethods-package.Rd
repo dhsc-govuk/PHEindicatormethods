@@ -18,6 +18,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Georgina Anderson \email{georgina.anderson@dhsc.gov.uk}
 
+Authors:
+\itemize{
+  \item Georgina Anderson \email{georgina.anderson@dhsc.gov.uk}
+}
+
 Other contributors:
 \itemize{
   \item Sebastian Fox [contributor]

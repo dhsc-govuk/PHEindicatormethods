@@ -16,22 +16,30 @@ export(phe_sii)
 import(broom)
 import(dplyr)
 importFrom(lifecycle,deprecated)
-importFrom(purrr,map)
-importFrom(purrr,map_chr)
-importFrom(rlang,":=")
-importFrom(rlang,.data)
-importFrom(rlang,.env)
-importFrom(rlang,quo_name)
-importFrom(rlang,quo_text)
-importFrom(rlang,sym)
-importFrom(stats,lm)
-importFrom(stats,qchisq)
-importFrom(stats,qnorm)
-importFrom(stats,qt)
-importFrom(stats,rnorm)
-importFrom(stats,sd)
+importFrom(purrr,
+  map,
+  map_chr
+)
+importFrom(rlang,
+  ":=",
+  .data,
+  .env,
+  quo_name,
+  quo_text,
+  sym
+)
+importFrom(stats,
+  lm,
+  qchisq,
+  qnorm,
+  qt,
+  rnorm,
+  sd
+)
 importFrom(tibble,as_tibble)
-importFrom(tidyr,nest)
-importFrom(tidyr,spread)
-importFrom(tidyr,unnest)
+importFrom(tidyr,
+  nest,
+  spread,
+  unnest
+)
 importFrom(tidyselect,where)

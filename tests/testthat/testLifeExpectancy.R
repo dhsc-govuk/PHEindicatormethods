@@ -219,8 +219,12 @@ age_contents_short <- c(0L, 1L, 5L, 10L, 15L, 20L, 25L, 30L, 35L,
                         40L, 45L, 50L, 55L, 60L, 65L, 70L, 75L, 80L, 85L)
 
 missing_warning     <- capture_warnings(
-  test_missing_ageband <- phe_life_expectancy(df_missing_age, deaths, pop, age,
-                                              age_contents = age_contents_short))
+  test_missing_ageband <- phe_life_expectancy(
+    filter(
+      df_grouped_with_warnings, area %in% c("Good data", "Missing age band")
+    ),
+    deaths, pop, age)
+  )
 wideci_warning <- capture_warnings(
   test_widecis <- phe_life_expectancy(df_widecis_plus, deaths, pops, startage, confidence = c(0.95, 0.998)))
 multi_warnings      <- capture_warnings(
@@ -308,7 +312,7 @@ test_that("LE - warnings are generated when invalid arguments are used",{
   expect_match(low_pops_warning,
                "some groups have a total population of less than 5,000; outputs have been suppressed to NAs")
   expect_match(missing_warning,
-               "some groups contain a different number of age bands than 20; life expectancy cannot be calculated for these\\. These groups will contain NAs\\.")
+               "some groups do not contain records for all age bands; life expectancy cannot be calculated for these\\. These groups will contain NAs\\.")
   expect_match(wideci_warning,
                "some age bands have more deaths than population; outputs have been suppressed to NAs",
                all = FALSE)
@@ -319,7 +323,7 @@ test_that("LE - warnings are generated when invalid arguments are used",{
                all = FALSE)
   expect_match(multi_warnings, "some age bands have a zero or less population; outputs have been suppressed to NAs",
                all = FALSE)
-  expect_match(multi_warnings, "some groups contain a different number of age bands than 20; life expectancy cannot be calculated for these\\. These groups will contain NAs\\.",
+  expect_match(multi_warnings, "some groups do not contain records for all age bands; life expectancy cannot be calculated for these\\. These groups will contain NAs\\.",
                all = FALSE)
   expect_match(multi_warnings, "some age bands have more deaths than population; outputs have been suppressed to NAs",
                all = FALSE)

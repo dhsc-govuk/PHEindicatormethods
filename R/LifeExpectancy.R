@@ -268,7 +268,7 @@ phe_life_expectancy <- function(data, deaths, population, startage,
   }
 
   # check for all rows per group
-  number_age_bands <- 20 #length(age_contents)
+  number_age_bands <- length(age_contents)
   incomplete_areas <- as_tibble(data) %>%
     group_by(across(all_of(group_vars(data)))) %>%
     count()
@@ -282,7 +282,13 @@ phe_life_expectancy <- function(data, deaths, population, startage,
     filter(n != number_age_bands) %>%
     select(!c("n"))
   if (nrow(incomplete_areas) > 0) {
-          warning("some groups contain a different number of age bands than 20; life expectancy cannot be calculated for these. These groups will contain NAs.")
+          warning(
+            paste0(
+              "some groups do not contain records for all age bands; ",
+              "life expectancy cannot be calculated for these. ",
+              "These groups will contain NAs."
+            )
+          )
 
           # Insert NAs into output fields to be row bound to the final output at end
           if (length(group_vars(data)) > 0) {

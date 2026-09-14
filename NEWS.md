@@ -1,3 +1,6 @@
+## PHEindicatormethods v2.1.2
+Allows phe_life_expectancy function to be executed with any number of agebands. 
+
 ## PHEindicatormethods v2.1.1
 * No updates to code functionality.
 * amended GitHub referencing for Bug Reports in DESCRIPTION as code repository 

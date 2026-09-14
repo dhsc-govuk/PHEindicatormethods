@@ -1,14 +1,9 @@
-## CRAN submission of PHEindicatormethods package version 2.1.1
+## CRAN submission of PHEindicatormethods package version 2.1.2
 
 ## Updates in this release
 
-* No changes to functionality
-* Due to organisation restructure the code has moved to a new GitHub repo and 
-therefore the DESCRIPTION file has been updated as follows:  
-
-1 The BugReports section has been updated to signpost a new GitHub Issues URL.  
-2 The new organisation has been added as the Copyright holder.  
-
+* Allows the phe_life_expectancy function to be executed more flexibly, no
+longer requiring exaclty 20 age bands.
 
 ## R CMD check results on local installation
 
@@ -39,7 +34,7 @@ GitHub actions all passed running R-CMD-check on the following platforms:
 
 ## CRAN Checks for existing package release
 
-CRAN checks for version v2.1.0 are all OK
+CRAN checks for version v2.1.1 are all OK
 
 
 ## Downstream dependencies
