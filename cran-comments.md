@@ -7,19 +7,19 @@ longer requiring exaclty 20 age bands.
 
 ## R CMD check results on local installation
 
-There were no ERRORs, WARNINGS or NOTES on the following local installation:
+There were no ERRORs, WARNINGS or NOTES on the following local installation:  
+
 * Windows 11 install using R 4.4.1
 
 
 ## Other Test Environments 
 
-devtools::check_win_* on the following R versions gave no ERRORS or WARNINGS.
-There was 1 NOTE from R oldrelease about a possibly invalid url but this has
-been checked and is correct and is still functional.
+devtools::check_win_* on the following R versions gave no ERRORS, WARNINGS or
+NOTES.  
 
-* release:    R version 4.5.2 (2025-10-31 ucrt)
-* oldrelease: R version 4.4.3 (2025-02-28 ucrt)
-* devel:      R Under development (unstable) (2025-11-13 r89017 ucrt)  
+* release:    R version 4.6.1 (2026-06-24 ucrt)
+* oldrelease: R version 4.5.3 (2026-03-11 ucrt)
+* devel:      R Under development (unstable) (2026-09-13 r90534 ucrt)  
 
 </br>
 
